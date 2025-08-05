@@ -1,0 +1,200 @@
+/* Header.css */
+.header {
+  background-color: #ffffff;
+  border-bottom: 1px solid #e0e0e0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.header-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 2rem;
+  height: 80px;
+}
+
+/* Logo Section */
+.logo-section {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.ieee-logo {
+  display: flex;
+  align-items: center;
+  height: 40px;
+}
+
+.ieee-image {
+  height: 32px;
+  width: auto;
+  object-fit: contain;
+}
+
+.sairam-logo {
+  display: flex;
+  align-items: center;
+  height: 40px;
+}
+
+.sairam-image {
+  height: 36px;
+  width: auto;
+  object-fit: contain;
+}
+
+.sairam-subtitle {
+  font-size: 0.75rem;
+  color: #7f8c8d;
+  letter-spacing: 1px;
+  margin-top: -2px;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 500;
+}
+
+/* Navigation */
+.navigation {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+}
+
+.nav-menu {
+  display: flex;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  gap: 2rem;
+}
+
+.nav-item {
+  position: relative;
+}
+
+.nav-link {
+  text-decoration: none;
+  color: #2c3e50;
+  font-weight: 500;
+  font-size: 1rem;
+  padding: 0.5rem 0;
+  transition: color 0.3s ease;
+  position: relative;
+  font-family: 'Poppins', sans-serif;
+}
+
+.nav-link:hover {
+  color: #0066cc;
+}
+
+.nav-link::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background-color: #0066cc;
+  transition: width 0.3s ease;
+}
+
+.nav-link:hover::after {
+  width: 100%;
+}
+
+/* Actions */
+.actions {
+  display: flex;
+  align-items: center;
+}
+
+.staffs-btn {
+  background-color: #0066cc;
+  color: white;
+  border: none;
+  padding: 0.7rem 1.4rem;
+  border-radius: 25px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0, 102, 204, 0.2);
+  font-family: 'Poppins', sans-serif;
+  min-width: 100px;
+}
+
+.staffs-btn:hover {
+  background-color: #0052a3;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 102, 204, 0.3);
+}
+
+.staffs-btn:active {
+  transform: translateY(0);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .header-container {
+    padding: 0.5rem 1rem;
+    height: auto;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .logo-section {
+    justify-content: center;
+  }
+
+  .navigation {
+    order: 2;
+  }
+
+  .nav-menu {
+    gap: 1rem;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .nav-link {
+    font-size: 0.9rem;
+  }
+
+  .actions {
+    order: 1;
+  }
+
+  .staffs-btn {
+    padding: 0.6rem 1.2rem;
+    font-size: 0.85rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .header-container {
+    padding: 0.75rem;
+  }
+
+  .logo-section {
+    flex-direction: column;
+    text-align: center;
+    gap: 0.5rem;
+  }
+
+  .sairam-text {
+    font-size: 1.3rem;
+  }
+
+  .nav-menu {
+    gap: 0.75rem;
+  }
+
+  .nav-link {
+    font-size: 0.85rem;
+  }
+}
