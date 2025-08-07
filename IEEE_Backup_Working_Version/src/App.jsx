@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import Header from './components/Header'
-import ApplicationForm from './components/Students form/ApplicationForm'
+import ApplicationForm from './components/ApplicationForm'
 import './App.css'
 import footerLogoImg from './assets/images/footer-logo.png'
 import profileImg from './assets/images/images.jpeg'
