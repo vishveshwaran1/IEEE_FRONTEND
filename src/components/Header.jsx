@@ -3,7 +3,7 @@ import './Header.css';
 import ieeeLogoImg from '../assets/images/ieee-logo.jpeg';
 import sairamLogoImg from '../assets/images/logo.gif';
 
-const Header = () => {
+const Header = ({ onStaffLogin }) => {
   return (
     <header className="header">
       <div className="header-container">
@@ -40,7 +40,7 @@ const Header = () => {
 
         {/* Staffs Button */}
         <div className="actions">
-          <button className="staffs-btn">Staffs</button>
+          <button className="staffs-btn" onClick={onStaffLogin}>Staffs</button>
         </div>
       </div>
     </header>

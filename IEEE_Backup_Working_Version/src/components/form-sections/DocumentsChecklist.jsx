@@ -1,9 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import ieeeLogoImg from '../../assets/images/ieee-logo.jpeg';
 
-const DocumentsChecklist = ({ onPrevious, onNext, studentId }) => {
+const DocumentsChecklist = ({ onPrevious, onNext, studentId, uploadedDocuments, setUploadedDocuments }) => {
   const [checkedDocuments, setCheckedDocuments] = useState({});
-  const [uploadedFiles, setUploadedFiles] = useState({});
+
+  // Use the uploadedDocuments from parent instead of local state
+  const uploadedFiles = uploadedDocuments || {};
 
   const documents = [
     {
@@ -57,6 +59,11 @@ const DocumentsChecklist = ({ onPrevious, onNext, studentId }) => {
   ];
 
   const handleCheckboxChange = (documentId) => {
+    // If there's an uploaded file, don't allow manual unchecking
+    if (uploadedFiles[documentId]) {
+      return; // Prevent unchecking when file is uploaded
+    }
+    
     setCheckedDocuments(prev => ({
       ...prev,
       [documentId]: !prev[documentId]
@@ -66,10 +73,49 @@ const DocumentsChecklist = ({ onPrevious, onNext, studentId }) => {
   const handleFileUpload = (documentId, event) => {
     const file = event.target.files[0];
     if (file) {
-      setUploadedFiles(prev => ({
+      setUploadedDocuments(prev => ({
         ...prev,
         [documentId]: file
       }));
+      
+      // Automatically check the checkbox when file is uploaded
+      setCheckedDocuments(prev => ({
+        ...prev,
+        [documentId]: true
+      }));
+    } else {
+      // If no file selected (cleared), uncheck the checkbox
+      setUploadedDocuments(prev => {
+        const newFiles = { ...prev };
+        delete newFiles[documentId];
+        return newFiles;
+      });
+      
+      setCheckedDocuments(prev => ({
+        ...prev,
+        [documentId]: false
+      }));
+    }
+  };
+
+  const handleRemoveFile = (documentId) => {
+    // Remove the uploaded file
+    setUploadedDocuments(prev => {
+      const newFiles = { ...prev };
+      delete newFiles[documentId];
+      return newFiles;
+    });
+    
+    // Uncheck the checkbox
+    setCheckedDocuments(prev => ({
+      ...prev,
+      [documentId]: false
+    }));
+    
+    // Clear the file input
+    const fileInput = document.getElementById(`file-${documentId}`);
+    if (fileInput) {
+      fileInput.value = '';
     }
   };
 
@@ -103,10 +149,10 @@ const DocumentsChecklist = ({ onPrevious, onNext, studentId }) => {
                     id={`checkbox-${doc.id}`}
                     checked={checkedDocuments[doc.id] || false}
                     onChange={() => handleCheckboxChange(doc.id)}
-                    className="custom-checkbox"
+                    className={`custom-checkbox ${uploadedFiles[doc.id] ? 'auto-checked' : ''}`}
                   />
                   <label htmlFor={`checkbox-${doc.id}`} className="checkbox-label">
-                    <span className="checkmark"></span>
+                    <span className={`checkmark ${uploadedFiles[doc.id] ? 'auto-checked' : ''}`}></span>
                   </label>
                 </div>
 
@@ -136,6 +182,16 @@ const DocumentsChecklist = ({ onPrevious, onNext, studentId }) => {
                   {uploadedFiles[doc.id] && (
                     <div className="uploaded-file">
                       <span className="file-name">✓ {uploadedFiles[doc.id].name}</span>
+                      <button 
+                        className="remove-file-btn"
+                        onClick={() => handleRemoveFile(doc.id)}
+                        title="Remove file"
+                      >
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+                          <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
+                        </svg>
+                        Remove
+                      </button>
                     </div>
                   )}
                 </div>

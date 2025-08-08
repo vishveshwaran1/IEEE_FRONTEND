@@ -1,0 +1,158 @@
+.assigning-page {
+  width: 100%;
+  min-height: 100%;
+  background: transparent;
+  font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;
+}
+
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+}
+
+.page-header h2 {
+  font-size: 1.8rem;
+  font-weight: 600;
+  color: #0056b3;
+  margin: 0;
+}
+
+.search-container {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.search-input-wrapper {
+  display: flex;
+  align-items: center;
+  background: #f0f4f9;
+  border-radius: 8px;
+  padding: 0.5rem 0.8rem;
+  border: 1px solid #e3eafc;
+}
+
+.search-input-wrapper svg {
+  width: 20px;
+  height: 20px;
+  color: #6b7280;
+  margin-right: 0.5;
+  color: #6b7280;
+  margin-right: 0.5rem;
+}
+
+.search-input {
+  background: transparent;
+  border: none;
+  outline: none;
+  font-size: 1rem;
+  color: #333;
+  width: 250px;
+}
+
+.search-input::placeholder {
+  color: #9ca3af;
+}
+
+.projects-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.no-projects {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 4rem 2rem;
+  background: #f8f9fa;
+  border-radius: 12px;
+  color: #6b7280;
+}
+
+.no-projects-icon {
+  margin-bottom: 1rem;
+}
+
+.no-projects-icon svg {
+  width: 48px;
+  height: 48px;
+  color: #0056b3;
+  opacity: 0.5;
+}
+
+.no-projects h3 {
+  font-size: 1.4rem;
+  color: #333;
+  margin-bottom: 0.5rem;
+}
+
+.no-projects p {
+  font-size: 1rem;
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #e3eafc;
+}
+
+.pagination-btn,
+.pagination-number {
+  border: 1px solid #d1d5db;
+  background: #fff;
+  color: #374151;
+  border-radius: 6px;
+  min-width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-weight: 500;
+}
+
+.pagination-btn:hover:not(:disabled),
+.pagination-number:hover:not(.active) {
+  background: #f0f4f9;
+  border-color: #0056b3;
+  color: #0056b3;
+}
+
+.pagination-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.pagination-btn svg {
+  width: 20px;
+  height: 20px;
+}
+
+.pagination-number.active {
+  background: #0056b3;
+  color: #fff;
+  border-color: #0056b3;
+  font-weight: 600;
+}
+
+@media (max-width: 768px) {
+  .page-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .projects-grid {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1015,6 +1015,18 @@
   border-bottom: 1px solid #e0e7ff;
 }
 
+.section-title-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.student-id-display {
+  font-size: 0.875rem;
+  color: #475569;
+}
+
 .form-content {
   flex: 1;
   padding: 0.25rem 0;
@@ -1867,6 +1879,32 @@ select.form-input-main {
   background-color: #2563eb;
 }
 
+.submit-btn.loading {
+  background-color: #9ca3af;
+  cursor: not-allowed;
+  position: relative;
+}
+
+.submit-btn.loading:hover {
+  background-color: #9ca3af;
+}
+
+.loading-spinner {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border: 2px solid #ffffff40;
+  border-radius: 50%;
+  border-top: 2px solid #ffffff;
+  animation: spin 1s linear infinite;
+  margin-right: 8px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
 @media (max-width: 768px) {
   .main-form-container {
     padding: 1.5rem;
@@ -2028,6 +2066,22 @@ select.form-input-main {
   font-weight: bold;
 }
 
+/* Auto-checked state styling */
+.custom-checkbox.auto-checked:checked + .checkbox-label .checkmark {
+  background-color: #059669;
+  border-color: #059669;
+}
+
+.checkmark.auto-checked {
+  border-color: #059669 !important;
+}
+
+.document-checkbox {
+  display: flex;
+  align-items: center;
+  margin-right: 0.75rem;
+}
+
 .document-content {
   flex: 1;
   width: 100%;
@@ -2101,6 +2155,14 @@ select.form-input-main {
 
 .uploaded-file {
   margin-top: 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.5rem;
+  background-color: #f0fdf4;
+  border: 1px solid #d1fae5;
+  border-radius: 6px;
 }
 
 .file-name {
@@ -2108,6 +2170,33 @@ select.form-input-main {
   color: #059669;
   font-weight: 500;
   font-family: 'Poppins', sans-serif;
+  flex: 1;
+}
+
+.remove-file-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.25rem 0.5rem;
+  background-color: #dc2626;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: 'Poppins', sans-serif;
+}
+
+.remove-file-btn:hover {
+  background-color: #b91c1c;
+  transform: translateY(-1px);
+}
+
+.remove-file-btn svg {
+  width: 10px;
+  height: 10px;
 }
 
 .ieee-logo-section {
@@ -2275,12 +2364,29 @@ select.form-input-main {
 .draft-indicator {
   margin-left: 1rem;
   padding: 0.25rem 0.75rem;
-  background-color: #dbeafe;
-  color: #1e40af;
+  background-color: #d1fae5;
+  color: #065f46;
   border-radius: 4px;
   font-size: 0.875rem;
   font-weight: 500;
-  border: 1px solid #3b82f6;
+  border: 1px solid #10b981;
+  animation: fadeIn 0.3s ease-in;
+}
+
+.draft-loaded-indicator {
+  margin-left: 1rem;
+  padding: 0.25rem 0.75rem;
+  background-color: #fef3c7;
+  color: #92400e;
+  border-radius: 4px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  border: 1px solid #f59e0b;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-2px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
   .student-info {
@@ -2825,3 +2931,347 @@ select.form-input-main {
       padding-top: 1.5rem;
     }
   }
+
+/* Close Warning Popup Styles */
+.close-warning-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  backdrop-filter: blur(4px);
+}
+
+.close-warning-popup {
+  background: white;
+  border-radius: 12px;
+  padding: 2rem;
+  max-width: 480px;
+  width: 90%;
+  text-align: center;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.warning-icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  color: #f59e0b;
+}
+
+.close-warning-popup h3 {
+  color: #1f2937;
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  font-family: 'Poppins', sans-serif;
+}
+
+.close-warning-popup p {
+  color: #6b7280;
+  font-size: 1rem;
+  line-height: 1.6;
+  margin-bottom: 2rem;
+  font-family: 'Poppins', sans-serif;
+}
+
+.warning-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.btn-cancel {
+  background-color: #6b7280;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: 'Poppins', sans-serif;
+  min-width: 120px;
+}
+
+.btn-cancel:hover {
+  background-color: #4b5563;
+  transform: translateY(-1px);
+}
+
+.btn-confirm-danger {
+  background-color: #dc2626;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: 'Poppins', sans-serif;
+  min-width: 120px;
+}
+
+.btn-confirm-danger:hover {
+  background-color: #b91c1c;
+  transform: translateY(-1px);
+}
+
+/* Mobile responsiveness for warning popup */
+@media (max-width: 480px) {
+  .close-warning-popup {
+    padding: 1.5rem;
+    margin: 1rem;
+  }
+  
+  .warning-actions {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+  
+  .btn-cancel,
+  .btn-confirm-danger {
+    width: 100%;
+    min-width: unset;
+  }
+}
+
+/* Enhanced Responsive Styles for Basic Information and All Form Sections */
+.basic-info-content {
+  max-width: 100%;
+  margin: 0 auto;
+}
+
+/* Compact form styling */
+.compact-row {
+  margin-bottom: 0.5rem;
+  gap: 0.75rem;
+}
+
+.compact-input {
+  height: 36px;
+  padding: 0.5rem 0.6rem;
+  font-size: 0.875rem;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 6px;
+}
+
+.compact-input:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+}
+
+.compact-select {
+  background-position: right 0.5rem center;
+  background-size: 1.2em 1.2em;
+  padding-right: 2.2rem;
+}
+
+/* Responsive grid system */
+.responsive-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+}
+
+.responsive-half {
+  min-width: 0; /* Prevents overflow */
+}
+
+/* Tablet Styles (768px - 1024px) */
+@media (max-width: 1024px) and (min-width: 769px) {
+  .basic-info-content {
+    padding: 1rem;
+  }
+  
+  .compact-row {
+    gap: 0.6rem;
+  }
+  
+  .compact-input {
+    height: 38px;
+    font-size: 0.875rem;
+  }
+  
+  .form-group label {
+    font-size: 0.875rem;
+    margin-bottom: 0.3rem;
+  }
+}
+
+/* Mobile Styles (up to 768px) */
+@media (max-width: 768px) {
+  .basic-info-content {
+    padding: 0.75rem;
+  }
+  
+  .section-title-container {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  
+  .student-id-display {
+    align-self: stretch;
+    justify-content: center;
+  }
+  
+  .responsive-row {
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+  }
+  
+  .compact-row {
+    margin-bottom: 0.75rem;
+    gap: 0.5rem;
+  }
+  
+  .compact-input {
+    height: 40px;
+    padding: 0.6rem 0.7rem;
+    font-size: 0.9rem;
+    border-radius: 8px;
+  }
+  
+  .form-group label {
+    font-size: 0.9rem;
+    margin-bottom: 0.4rem;
+    font-weight: 600;
+  }
+  
+  .section-title {
+    font-size: 1.1rem;
+    text-align: center;
+    padding: 0.75rem;
+  }
+  
+  .compact-select {
+    background-size: 1.4em 1.4em;
+    padding-right: 2.5rem;
+  }
+}
+
+/* Small Mobile Styles (up to 480px) */
+@media (max-width: 480px) {
+  .basic-info-content {
+    padding: 0.5rem;
+  }
+  
+  .compact-row {
+    margin-bottom: 0.6rem;
+  }
+  
+  .compact-input {
+    height: 42px;
+    padding: 0.7rem;
+    font-size: 16px; /* Prevents zoom on iOS */
+    border-radius: 10px;
+  }
+  
+  .form-group label {
+    font-size: 0.95rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  .section-title {
+    font-size: 1rem;
+    padding: 0.5rem;
+  }
+  
+  /* Ensure dropdowns are touch-friendly */
+  .compact-select {
+    height: 44px;
+    font-size: 16px;
+    padding: 0.7rem 2.8rem 0.7rem 0.7rem;
+    background-size: 1.5em 1.5em;
+  }
+}
+
+/* Large Screen Optimizations (1200px+) */
+@media (min-width: 1200px) {
+  .basic-info-content {
+    max-width: 800px;
+    padding: 1.5rem 2rem;
+  }
+  
+  .responsive-row {
+    gap: 1rem;
+  }
+  
+  .compact-input {
+    height: 38px;
+    padding: 0.6rem 0.8rem;
+  }
+}
+
+/* Touch-friendly improvements for all devices */
+@media (pointer: coarse) {
+  .compact-input, .compact-select {
+    min-height: 44px; /* Apple's recommended touch target size */
+  }
+  
+  .form-group label {
+    cursor: default;
+  }
+}
+
+/* High DPI display optimizations */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  .compact-input {
+    border-width: 0.5px;
+  }
+}
+
+/* Landscape mobile orientation */
+@media (max-width: 768px) and (orientation: landscape) {
+  .responsive-row {
+    grid-template-columns: 1fr 1fr;
+  }
+  
+  .compact-row {
+    margin-bottom: 0.4rem;
+  }
+  
+  .compact-input {
+    height: 36px;
+    padding: 0.5rem 0.6rem;
+  }
+}
+
+/* Mobile responsiveness for uploaded files */
+@media (max-width: 768px) {
+  .uploaded-file {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+  
+  .remove-file-btn {
+    align-self: flex-end;
+    padding: 0.35rem 0.6rem;
+    font-size: 0.8rem;
+  }
+  
+  .document-checkbox {
+    margin-right: 0.5rem;
+  }
+}

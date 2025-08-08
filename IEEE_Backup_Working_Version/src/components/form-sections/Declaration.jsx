@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-const Declaration = ({ onPrevious, onSubmit }) => {
+const Declaration = ({ onPrevious, onSubmit, pdfGenerating = false }) => {
   const [declarationData, setDeclarationData] = useState({
     applicantName: '',
     sairamId: '',
@@ -139,10 +139,18 @@ const Declaration = ({ onPrevious, onSubmit }) => {
           </button>
           <button 
             type="button"
-            className="submit-btn"
+            className={`submit-btn ${pdfGenerating ? 'loading' : ''}`}
             onClick={handleSubmit}
+            disabled={pdfGenerating}
           >
-            Submit
+            {pdfGenerating ? (
+              <>
+                <span className="loading-spinner"></span>
+                Generating PDF...
+              </>
+            ) : (
+              'Submit'
+            )}
           </button>
         </div>
       </div>

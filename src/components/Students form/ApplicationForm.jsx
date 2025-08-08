@@ -15,14 +15,6 @@ import FundingTimeline from '../form-sections/FundingTimeline';
 import ImpactDeclaration from '../form-sections/ImpactDeclaration';
 
 const ApplicationForm = ({ onBackToHome }) => {
-  // Utility function to clear all application data (for testing purposes)
-  const clearAllData = () => {
-    localStorage.removeItem('applicationFormDraft');
-    localStorage.removeItem('applicationFormData');
-    localStorage.removeItem('applicationFormStep');
-    localStorage.removeItem('applicationFormVerification');
-    window.location.reload();
-  };
   // Load saved draft data if available
   const loadSavedData = () => {
     const savedDraft = localStorage.getItem('applicationFormDraft');
@@ -701,8 +693,16 @@ const ApplicationForm = ({ onBackToHome }) => {
     // Generate and download PDF
     await generateApplicationPDF();
     
-    // Application completed - no alert needed
-    // setCurrentStep('completion');
+    // Clear all form data from localStorage after successful submission
+    localStorage.removeItem('applicationFormDraft');
+    localStorage.removeItem('applicationFormData');
+    localStorage.removeItem('applicationFormStep');
+    localStorage.removeItem('applicationFormVerification');
+    
+    // Redirect back to landing page
+    if (onBackToHome) {
+      onBackToHome();
+    }
   };
 
   const handleSaveAsDraft = () => {
@@ -776,14 +776,6 @@ const ApplicationForm = ({ onBackToHome }) => {
           <div className="header-actions">
             <button className="back-to-home-btn" onClick={onBackToHome}>
               ← Back to Home
-            </button>
-            {/* Temporary debug button - remove in production */}
-            <button 
-              className="back-to-home-btn" 
-              onClick={clearAllData}
-              style={{ marginLeft: '10px', backgroundColor: '#dc3545' }}
-            >
-              🗑️ Clear Data
             </button>
           </div>
         </div>

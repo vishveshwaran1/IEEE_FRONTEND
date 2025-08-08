@@ -1,0 +1,140 @@
+.dashboard-header {
+  width: 100%;
+  background: #fff;
+  border-bottom: 2px solid #e3eafc;
+  padding: 0.8rem 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.header-logo {
+  height: 32px;
+  width: auto;
+}
+
+.header-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #0056b3;
+  letter-spacing: 0.5px;
+}
+
+.header-title h1 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.header-subtitle {
+  font-size: 0.75rem;
+  color: #6b7280;
+  font-weight: 400;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+}
+
+.mentor-info {
+  text-align: right;
+  line-height: 1.3;
+  margin-right: 0.5rem;
+}
+
+.mentor-name {
+  font-size: 0.9rem;
+  color: #0056b3;
+  font-weight: 600;
+  display: block;
+}
+
+.mentor-role,
+.mentor-id {
+  font-size: 0.75rem;
+  color: #6b7280;
+  display: block;
+}
+
+.mentor-id {
+  font-family: monospace;
+  font-size: 0.7rem;
+}
+
+.profile-section {
+  position: relative;
+}
+
+.profile-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #0056b3, #1e3a8a);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  border: 2px solid #fff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.profile-dropdown {
+  position: absolute;
+  top: 120%;
+  right: 0;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e3eafc;
+  width: 160px;
+  overflow: hidden;
+  z-index: 100;
+}
+
+.dropdown-item {
+  padding: 0.7rem 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.dropdown-item:hover {
+  background: #f6fafd;
+}
+
+.dropdown-item svg {
+  width: 18px;
+  height: 18px;
+  color: #6b7280;
+}
+
+@media (max-width: 900px) {
+  .dashboard-header {
+    padding: 0.6rem 1rem;
+  }
+  .header-title {
+    font-size: 1rem;
+  }
+  .mentor-info {
+    display: none;
+  }
+}

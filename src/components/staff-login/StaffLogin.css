@@ -1,0 +1,360 @@
+/* Staff Login Page Styles */
+.staff-login-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: stretch;
+  background: #f6fafd;
+}
+
+/* Left Side - Campus Image Section */
+.login-image-section {
+  flex: 1;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background-color: #1e3a8a; /* Fallback color */
+}
+
+.login-image-section::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: url('../../assets/images/sairarm.jpg') no-repeat center center;
+  background-size: cover;
+}
+
+/* Right Side - Login Form Section */
+.login-form-section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.login-form-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url('../../assets/images/sairarm.jpg') no-repeat center center;
+  background-size: cover;
+  filter: blur(8px);
+  transform: scale(1.1);
+  z-index: 0;
+}
+
+/* Top Right Sairam Logo */
+.top-logo {
+  position: absolute;
+  top: 1.5rem;
+  right: 1.5rem;
+  z-index: 10;
+}
+
+.sairam-logo-top {
+  height: 50px;
+  width: auto;
+  object-fit: contain;
+}
+
+/* Bottom Left IEEE Logo */
+.bottom-left-logo {
+  position: absolute;
+  bottom: 1.5rem;
+  left: 1.5rem;
+  z-index: 10;
+}
+
+.ieee-logo-bottom {
+  height: 45px;
+  width: auto;
+  object-fit: contain;
+}
+
+/* Login Form Container */
+.login-form-container {
+  width: 100%;
+  max-width: 400px;
+  margin: auto;
+  border-radius: 16px;
+  box-shadow: 0 4px 24px rgba(0,86,179,0.07);
+  padding: 2rem 1.5rem;
+  position: relative;
+  z-index: 1;
+}
+
+.login-form-wrapper {
+  width: 350px;
+  height: 350px;
+  padding: 2rem;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.login-title {
+  color: #0056b3;
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+.login-title .account-text {
+  color: #0056b3;
+}
+
+.login-subtitle {
+  color: #444;
+  font-size: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+/* Form Styles */
+.staff-login-form {
+  width: 100%;
+}
+
+.form-field {
+  margin-bottom: 0.8rem; /* Reduced from 1rem */
+}
+
+.form-field label {
+  color: #0056b3;
+  font-weight: 500;
+  margin-bottom: 0.3rem;
+  display: block;
+}
+
+.form-input-field {
+  width: 100%;
+  padding: 0.6rem;
+  border-radius: 8px;
+  border: 1px solid #e3eafc;
+  margin-bottom: 1rem;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  background: rgba(248, 249, 250, 0.8);
+  box-sizing: border-box;
+  color: #333333;
+}
+
+.form-input-field:focus {
+  outline: none;
+  border-color: #0056b3;
+  box-shadow: 0 0 0 2px rgba(0, 86, 179, 0.2);
+  background: #ffffff;
+}
+
+.form-input-field::placeholder {
+  color: #999999;
+}
+
+/* Form Options */
+.form-options {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.8rem; /* Reduced from 1rem */
+}
+
+.remember-checkbox {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  font-size: 0.65rem; /* Reduced from 0.7rem */
+  color: #333333;
+  font-weight: 400;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.checkmark-custom {
+  height: 12px; /* Reduced from 14px */
+  width: 12px;
+  background-color: #ffffff;
+  border-radius: 3px;
+  margin-right: 0.25rem; /* Reduced margin */
+  position: relative;
+  transition: all 0.3s ease;
+  border: 1px solid rgba(51, 51, 51, 0.3);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.checkmark-custom:after {
+  content: "";
+  position: absolute;
+  display: none;
+  left: 2.5px; /* Adjusted for smaller size */
+  top: 0.5px;
+  width: 2.5px; /* Reduced width */
+  height: 5px; /* Reduced height */
+  border: solid white;
+  border-width: 0 1.5px 1.5px 0;
+  transform: rotate(45deg);
+}
+
+.remember-checkbox:hover input ~ .checkmark-custom {
+  background-color: #ffffff;
+  border-color: #0056b3;
+  transform: scale(1.05);
+}
+
+.remember-checkbox input:checked ~ .checkmark-custom {
+  background-color: #0056b3;
+  border-color: #0056b3;
+}
+
+.forget-password-link {
+  background: none;
+  border: none;
+  color: #0056b3;
+  font-size: 0.65rem; /* Reduced from 0.7rem */
+  cursor: pointer;
+  text-decoration: underline;
+  font-family: 'Poppins', sans-serif;
+  transition: color 0.3s ease;
+}
+
+.forget-password-link:hover {
+  color: #004494;
+}
+
+/* Login Button */
+.login-btn-staff {
+  width: 100%;
+  background: #0056b3;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 0.7rem 1.2rem;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 1rem;
+  transition: background 0.2s;
+  font-family: 'Poppins', sans-serif;
+  margin-bottom: 0.8rem; /* Reduced margin */
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.login-btn-staff:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.login-btn-staff:hover:not(:disabled) {
+  background: #004494;
+  transform: translateY(-1px);
+  box-shadow: 0 3px 10px rgba(0, 86, 179, 0.3);
+}
+
+/* Footer Links */
+.login-footer-links {
+  text-align: center;
+  font-size: 0.65rem; /* Reduced from 0.7rem */
+}
+
+.no-account-text {
+  color: #666666;
+}
+
+.create-account-link {
+  background: none;
+  border: none;
+  color: #0056b3;
+  font-size: 0.65rem; /* Reduced from 0.7rem */
+  cursor: pointer;
+  text-decoration: underline;
+  font-weight: 500;
+  transition: color 0.3s ease;
+  font-family: 'Poppins', sans-serif;
+}
+
+.create-account-link:hover {
+  color: #004494;
+}
+
+/* Error Message */
+.error-message-staff {
+  color: #d32f2f;
+  background: #ffeaea;
+  border-radius: 6px;
+  padding: 0.7rem;
+  margin-bottom: 1rem;
+  font-size: 1rem;
+  text-align: center;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .login-form-wrapper {
+    width: 300px;
+    height: 300px;
+    padding: 1.5rem;
+  }
+  
+  .login-title {
+    font-size: 1.1rem; /* Reduced from 1.3rem */
+  }
+}
+
+@media (max-width: 768px) {
+  .login-form-wrapper {
+    width: 280px;
+    height: 280px;
+    padding: 1.25rem;
+  }
+  
+  .login-title {
+    font-size: 1rem; /* Reduced from 1.2rem */
+  }
+  
+  .form-options {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.4rem; /* Reduced gap */
+  }
+  
+  .forget-password-link {
+    align-self: flex-end;
+  }
+}
+
+@media (max-width: 480px) {
+  .login-form-wrapper {
+    width: 260px;
+    height: 260px;
+    padding: 1rem;
+  }
+  
+  .login-title {
+    font-size: 0.95rem; /* Reduced from 1.1rem */
+  }
+  
+  .form-input-field {
+    padding: 0.5rem; /* Reduced from 0.6rem */
+    font-size: 14px; /* Prevents zoom on iOS */
+  }
+}
+
+@media (max-width: 900px) {
+  .login-image-section {
+    display: none;
+  }
+  .login-form-section {
+    flex: 1;
+    padding: 2rem 0.5rem;
+  }
+}

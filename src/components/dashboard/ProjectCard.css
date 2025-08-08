@@ -1,0 +1,118 @@
+.project-card {
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 4px 24px rgba(0,86,179,0.07);
+  padding: 1.5rem 1.2rem 1.2rem 1.2rem;
+  margin-bottom: 1.2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;
+  transition: box-shadow 0.2s;
+}
+
+.project-card:hover {
+  box-shadow: 0 8px 32px rgba(0,86,179,0.12);
+}
+
+.project-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.project-title {
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: #0056b3;
+  margin: 0;
+}
+
+.project-tag {
+  background: #e3eafc;
+  color: #0056b3;
+  font-size: 0.95rem;
+  font-weight: 500;
+  padding: 0.25rem 0.8rem;
+  border-radius: 8px;
+  margin-left: 0.5rem;
+}
+
+.project-meta {
+  font-size: 0.98rem;
+  color: #0056b3;
+  font-weight: 500;
+  margin-bottom: 0.3rem;
+}
+
+.problem-statement h4 {
+  font-size: 1rem;
+  color: #0056b3;
+  margin: 0 0 0.2rem 0;
+  font-weight: 500;
+}
+
+.problem-statement p {
+  font-size: 0.98rem;
+  color: #333;
+  margin: 0;
+}
+
+.project-description {
+  font-size: 0.97rem;
+  color: #444;
+  margin-bottom: 0.5rem;
+}
+
+.project-actions {
+  display: flex;
+  gap: 1rem;
+  margin-top: 0.5rem;
+}
+
+.download-btn,
+.review-btn {
+  background: #e3eafc;
+  color: #0056b3;
+  border: none;
+  border-radius: 8px;
+  padding: 0.5rem 1.1rem;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  transition: background 0.2s;
+}
+
+.download-btn svg,
+.review-btn svg {
+  width: 18px;
+  height: 18px;
+}
+
+.download-btn:hover,
+.review-btn:hover {
+  background: #c7dbfa;
+}
+
+.review-btn {
+  background: #0056b3;
+  color: #fff;
+}
+
+.review-btn:hover {
+  background: #004494;
+}
+
+/* Responsive */
+@media (max-width: 700px) {
+  .project-card {
+    padding: 1rem 0.7rem;
+  }
+  .project-title {
+    font-size: 1rem;
+  }
+}
