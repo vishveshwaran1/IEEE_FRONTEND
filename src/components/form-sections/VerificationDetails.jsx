@@ -2,16 +2,20 @@ import React, { useState } from 'react';
 
 // Backend API functions
 const sendOTP = async (studentId, email) => {
-  const response = await fetch('/api/auth/send-otp', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ studentId, email })
-  });
-  return response.json();
+  try {
+    const response = await fetch('https://ieeebackend.netlify.app/api/auth/send-otp', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ studentId, email })
+    });
+    return await response.json();
+  } catch (error) {
+    return { success: false, message: 'Network error. Please try again.' };
+  }
 };
 
 const verifyOTP = async (studentId, email, otp) => {
-  const response = await fetch('/api/auth/verify-otp', {
+  const response = await fetch('https://ieeebackend.netlify.app/api/auth/verify-otp', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ studentId, email, otp })
