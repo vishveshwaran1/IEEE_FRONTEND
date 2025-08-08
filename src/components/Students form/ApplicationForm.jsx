@@ -16,6 +16,95 @@ import ImpactDeclaration from '../form-sections/ImpactDeclaration';
 import Events from './form-sections/Events';
 import { useNavigate } from 'react-router-dom';
 
+// API Functions
+const sendOTP = async (studentId, email) => {
+  try {
+    const response = await fetch('/api/auth/send-otp', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ studentId, email })
+    });
+    
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    
+    return await response.json();
+  } catch (error) {
+    console.error('Error sending OTP:', error);
+    throw error;
+  }
+};
+
+const verifyOTP = async (studentId, email, otp) => {
+  try {
+    const response = await fetch('/api/auth/verify-otp', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ studentId, email, otp })
+    });
+    
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    
+    return await response.json();
+  } catch (error) {
+    console.error('Error verifying OTP:', error);
+    throw error;
+  }
+};
+
+const completeRegistration = async (userData) => {
+  try {
+    const response = await fetch('/api/auth/complete-registration', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(userData)
+    });
+    
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    
+    return await response.json();
+  } catch (error) {
+    console.error('Error completing registration:', error);
+    throw error;
+  }
+};
+
+// Retry functionality for failed API calls
+const retryApiCall = async (apiFunction, maxRetries = 3, delay = 1000) => {
+  for (let i = 0; i < maxRetries; i++) {
+    try {
+      return await apiFunction();
+    } catch (error) {
+      if (i === maxRetries - 1) throw error;
+      await new Promise(resolve => setTimeout(resolve, delay * (i + 1)));
+    }
+  }
+};
+
+// Error Message Component
+const ErrorMessage = ({ error }) => {
+  if (!error) return null;
+  
+  return (
+    <div className="api-error-message" style={{
+      color: '#dc3545',
+      backgroundColor: '#f8d7da',
+      border: '1px solid #f5c6cb',
+      borderRadius: '4px',
+      padding: '10px',
+      margin: '10px 0',
+      fontSize: '14px'
+    }}>
+      <strong>Error:</strong> {error}
+    </div>
+  );
+};
+
 const ApplicationForm = ({ onBackToHome }) => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({});
@@ -28,6 +117,8 @@ const ApplicationForm = ({ onBackToHome }) => {
   const [verificationMessage, setVerificationMessage] = useState('');
   const [pdfGenerating, setPdfGenerating] = useState(false);
   const [uploadedDocuments, setUploadedDocuments] = useState({});
+  const [apiError, setApiError] = useState('');
+  const [submissionLoading, setSubmissionLoading] = useState(false);
 
   const initialFormState = {
     studentId: '',
@@ -488,7 +579,7 @@ const ApplicationForm = ({ onBackToHome }) => {
     setCurrentStep('details');
   };
 
-  const handleSendOTP = () => {
+  const handleSendOTP = async () => {
     if (!formData.studentId || formData.studentId.trim().length < 5) {
       setVerificationMessage('Please enter a valid Student ID');
       return;
@@ -508,16 +599,28 @@ const ApplicationForm = ({ onBackToHome }) => {
     
     setVerificationLoading(true);
     setVerificationMessage('Sending OTP...');
+    setApiError('');
     
-    setTimeout(() => {
-      setOtpSent(true);
+    try {
+      const result = await retryApiCall(() => sendOTP(formData.studentId, formData.email));
+      
+      if (result.success) {
+        setOtpSent(true);
+        setVerificationLoading(false);
+        setVerificationMessage('OTP sent successfully to your email');
+        console.log('OTP sent successfully:', result);
+      } else {
+        throw new Error(result.message || 'Failed to send OTP');
+      }
+    } catch (error) {
       setVerificationLoading(false);
-      setVerificationMessage('OTP sent successfully to your email');
-      console.log('OTP sent to:', formData.email, 'for Student ID:', formData.studentId);
-    }, 2000);
+      setApiError(error.message);
+      setVerificationMessage('Failed to send OTP. Please try again.');
+      console.error('OTP sending failed:', error);
+    }
   };
 
-  const handleVerify = () => {
+  const handleVerify = async () => {
     if (!formData.otp || formData.otp.length !== 6) {
       setVerificationMessage('Please enter a valid 6-digit OTP');
       return;
@@ -525,19 +628,25 @@ const ApplicationForm = ({ onBackToHome }) => {
     
     setVerificationLoading(true);
     setVerificationMessage('Verifying OTP...');
+    setApiError('');
     
-    setTimeout(() => {
-      const isValidOTP = /^\d{6}$/.test(formData.otp);
+    try {
+      const result = await retryApiCall(() => verifyOTP(formData.studentId, formData.email, formData.otp));
       
-      if (isValidOTP) {
+      if (result.success) {
         setOtpVerified(true);
         setVerificationLoading(false);
         setVerificationMessage(`Verification successful for Student ID: ${formData.studentId}`);
+        console.log('OTP verified successfully:', result);
       } else {
-        setVerificationLoading(false);
-        setVerificationMessage('Invalid OTP. Please try again.');
+        throw new Error(result.message || 'Invalid OTP');
       }
-    }, 2000);
+    } catch (error) {
+      setVerificationLoading(false);
+      setApiError(error.message);
+      setVerificationMessage('Invalid OTP. Please try again.');
+      console.error('OTP verification failed:', error);
+    }
   };
 
   const handleContinue = () => {
@@ -565,27 +674,61 @@ const ApplicationForm = ({ onBackToHome }) => {
   };
 
   const handleDeclarationSubmit = async () => {
-    await generateApplicationPDF();
-
-    const submittedIDs = JSON.parse(localStorage.getItem('submittedIDs') || '[]');
-    submittedIDs.push(formData.studentId);
-    localStorage.setItem('submittedIDs', JSON.stringify(submittedIDs));
+    setSubmissionLoading(true);
+    setApiError('');
     
-    localStorage.removeItem(`draft_${formData.studentId}`);
-    
-    if (onBackToHome) {
-      onBackToHome();
+    try {
+      // Step 1: Generate PDF
+      await generateApplicationPDF();
+      
+      // Step 2: Prepare form data for backend submission
+      const submissionData = {
+        ...formData,
+        uploadedDocuments: Object.keys(uploadedDocuments).length > 0 ? uploadedDocuments : null,
+        submissionDate: new Date().toISOString(),
+        applicationId: `APP_${formData.studentId}_${Date.now()}`
+      };
+      
+      // Step 3: Submit to backend
+      const result = await retryApiCall(() => completeRegistration(submissionData));
+      
+      if (result.success) {
+        // Step 4: Update local storage
+        const submittedIDs = JSON.parse(localStorage.getItem('submittedIDs') || '[]');
+        submittedIDs.push(formData.studentId);
+        localStorage.setItem('submittedIDs', JSON.stringify(submittedIDs));
+        
+        // Step 5: Clean up draft
+        localStorage.removeItem(`draft_${formData.studentId}`);
+        
+        // Step 6: Show success message and redirect
+        alert('Application submitted successfully!');
+        console.log('Application submitted:', result);
+        
+        if (onBackToHome) {
+          onBackToHome();
+        }
+      } else {
+        throw new Error(result.message || 'Failed to submit application');
+      }
+    } catch (error) {
+      setApiError(error.message);
+      alert('Failed to submit application. Please try again.');
+      console.error('Application submission failed:', error);
+    } finally {
+      setSubmissionLoading(false);
     }
   };
 
   const handleSaveAsDraft = () => {
-    localStorage.setItem(`draft_${formData.studentId}`, JSON.stringify(formData));
-    
-    setShowDraftSaved(true);
-    
-    setTimeout(() => {
-      setShowDraftSaved(false);
-    }, 3000);
+    try {
+      localStorage.setItem(`draft_${formData.studentId}`, JSON.stringify(formData));
+      setShowDraftSaved(true);
+      setTimeout(() => setShowDraftSaved(false), 3000);
+    } catch (error) {
+      console.error('Failed to save draft:', error);
+      alert('Failed to save draft. Please try again.');
+    }
   };
 
   const handleFormContinue = () => {
@@ -643,6 +786,8 @@ const ApplicationForm = ({ onBackToHome }) => {
       </header>
 
       <div className="application-content">
+        {apiError && <ErrorMessage error={apiError} />}
+
         {currentStep === 'events' && (
           <Events onNext={handleEventsNext} />
         )}
@@ -662,6 +807,7 @@ const ApplicationForm = ({ onBackToHome }) => {
             otpVerified={otpVerified}
             verificationLoading={verificationLoading}
             verificationMessage={verificationMessage}
+            apiError={apiError}
           />
         )}
 
@@ -680,6 +826,8 @@ const ApplicationForm = ({ onBackToHome }) => {
             onPrevious={handleDeclarationPrevious}
             onSubmit={handleDeclarationSubmit}
             pdfGenerating={pdfGenerating}
+            submissionLoading={submissionLoading}
+            apiError={apiError}
           />
         )}
 

@@ -18,7 +18,6 @@ import project1Img from './assets/images/projects-1.jpg';
 import project2Img from './assets/images/projects-2.jpg';
 import project3Img from './assets/images/projects-3.jpeg';
 
-
 // Home component with project data, state management, and UI
 const Home = () => {
   const navigate = useNavigate();
@@ -87,40 +86,79 @@ const Home = () => {
   // Duplicate data to simulate longer scroll list
   const duplicatedProjectsData = [...projectsData, ...projectsData];
 
-  // State to hold impact numbers and loading state
+  // State to hold impact numbers and loading/error states
   const [impactNumbers, setImpactNumbers] = useState({
-    projectsFunded: null,
-    studentsMembers: null,
-    awardsWon: null,
-    papersPublished: null,
+    projectsFunded: 0,
+    studentsMembers: 0,
+    awardsWon: 0,
+    papersPublished: 0,
   });
   const [loadingImpact, setLoadingImpact] = useState(true);
+  const [errorImpact, setErrorImpact] = useState(null);
 
-  // Fetch or simulate fetching impact numbers
-  useEffect(() => {
-    const fetchImpactNumbers = async () => {
-      setLoadingImpact(true);
-      try {
-        // Simulated API fetch with timeout
-        const data = {
-          projectsFunded: 150,
-          studentsMembers: 750,
-          awardsWon: 65,
-          papersPublished: 220,
-        };
+  // Function to fetch impact numbers from backend
+  const fetchImpactNumbers = async () => {
+    setLoadingImpact(true);
+    setErrorImpact(null);
+    
+    try {
+      // Replace with your actual backend API endpoint
+      const response = await fetch('/api/impact-numbers', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
 
-        setTimeout(() => {
-          setImpactNumbers(data);
-          setLoadingImpact(false);
-        }, 1000);
-      } catch (error) {
-        console.error("Failed to fetch impact numbers:", error);
-        setLoadingImpact(false);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
-    };
 
+      const data = await response.json();
+      
+      // Validate the response data structure
+      if (data && typeof data === 'object') {
+        setImpactNumbers({
+          projectsFunded: data.projectsFunded || 0,
+          studentsMembers: data.studentsMembers || 0,
+          awardsWon: data.awardsWon || 0,
+          papersPublished: data.papersPublished || 0,
+        });
+      } else {
+        throw new Error('Invalid data format received from server');
+      }
+    } catch (error) {
+      console.error("Failed to fetch impact numbers:", error);
+      setErrorImpact(error.message);
+      
+      // Set fallback values or keep existing values
+      setImpactNumbers({
+        projectsFunded: 0,
+        studentsMembers: 0,
+        awardsWon: 0,
+        papersPublished: 0,
+      });
+    } finally {
+      setLoadingImpact(false);
+    }
+  };
+
+  // Fetch impact numbers on component mount
+  useEffect(() => {
     fetchImpactNumbers();
   }, []);
+
+  // Function to retry fetching data
+  const handleRetry = () => {
+    fetchImpactNumbers();
+  };
+
+  // Render loading state
+  const renderStatValue = (value) => {
+    if (loadingImpact) return 'Loading...';
+    if (errorImpact) return '--';
+    return value.toLocaleString(); // Format numbers with commas
+  };
 
   // Render JSX
   return (
@@ -173,24 +211,50 @@ const Home = () => {
         <section id="projects" className="impact-section">
           <div className="impact-container">
             <h2>Our Impact by Numbers</h2>
+            
+            {/* Error message with retry option */}
+            {errorImpact && (
+              <div className="error-message">
+                <p>Failed to load impact data: {errorImpact}</p>
+                <button onClick={handleRetry} className="retry-btn">
+                  Retry
+                </button>
+              </div>
+            )}
+            
             <div className="impact-stats">
               <div className="stat-card">
-                <div className="stat-number">{loadingImpact ? 'Loading...' : impactNumbers.projectsFunded}</div>
-                <div className="stat-label">Project Funded</div>
+                <div className="stat-number">
+                  {renderStatValue(impactNumbers.projectsFunded)}
+                </div>
+                <div className="stat-label">Projects Funded</div>
               </div>
               <div className="stat-card">
-                <div className="stat-number">{loadingImpact ? 'Loading...' : impactNumbers.studentsMembers}</div>
-                <div className="stat-label">Students Members</div>
+                <div className="stat-number">
+                  {renderStatValue(impactNumbers.studentsMembers)}
+                </div>
+                <div className="stat-label">Student Members</div>
               </div>
               <div className="stat-card">
-                <div className="stat-number">{loadingImpact ? 'Loading...' : impactNumbers.awardsWon}</div>
+                <div className="stat-number">
+                  {renderStatValue(impactNumbers.awardsWon)}
+                </div>
                 <div className="stat-label">Awards Won</div>
               </div>
               <div className="stat-card">
-                <div className="stat-number">{loadingImpact ? 'Loading...' : impactNumbers.papersPublished}</div>
+                <div className="stat-number">
+                  {renderStatValue(impactNumbers.papersPublished)}
+                </div>
                 <div className="stat-label">Papers Published</div>
               </div>
             </div>
+            
+            {/* Last updated timestamp */}
+            {!loadingImpact && !errorImpact && (
+              <div className="last-updated">
+                <small>Last updated: {new Date().toLocaleString()}</small>
+              </div>
+            )}
           </div>
         </section>
 
@@ -291,7 +355,6 @@ const Home = () => {
     </>
   );
 };
-
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem('loggedInMentor'));

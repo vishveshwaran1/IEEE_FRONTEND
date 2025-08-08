@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useNavigate, Routes, Route, Navigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import './StaffLogin.css';
 import sairamLogoImg from '../../assets/images/main logo 2.png';
 import ieeeLogoImg from '../../assets/images/ieee-logo 2.png';
@@ -9,7 +9,8 @@ import ExternalStaffRegister from './ExternalStaffRegister';
 
 const StaffLogin = ({ onBackToHome, onLoginSuccess }) => {
   const navigate = useNavigate();
-  const [currentView, setCurrentView] = useState('login'); // 'login', 'roleSelection', 'internalRegister', 'externalRegister'
+  const location = useLocation();
+  const [currentView, setCurrentView] = useState('login');
   const [loginData, setLoginData] = useState({
     email: '',
     password: '',
@@ -18,6 +19,44 @@ const StaffLogin = ({ onBackToHome, onLoginSuccess }) => {
   
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+
+  // Handle browser back button
+  useEffect(() => {
+    const handlePopState = (event) => {
+      // If we're in any view other than login, go back to login first
+      if (currentView !== 'login') {
+        setCurrentView('login');
+        // Prevent the default back navigation
+        window.history.pushState(null, '', window.location.pathname);
+      } else {
+        // If we're in login view, go back to home page
+        navigate('/', { replace: true });
+      }
+    };
+
+    // Add event listener for browser back button
+    window.addEventListener('popstate', handlePopState);
+    
+    // Push current state to prevent immediate back navigation
+    window.history.pushState(null, '', window.location.pathname);
+
+    // Cleanup
+    return () => {
+      window.removeEventListener('popstate', handlePopState);
+    };
+  }, [currentView, navigate]);
+
+  // Handle route changes to update currentView
+  useEffect(() => {
+    const searchParams = new URLSearchParams(location.search);
+    const view = searchParams.get('view');
+    
+    if (view && ['login', 'roleSelection', 'internalRegister', 'externalRegister'].includes(view)) {
+      setCurrentView(view);
+    } else {
+      setCurrentView('login');
+    }
+  }, [location.search]);
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -81,22 +120,29 @@ const StaffLogin = ({ onBackToHome, onLoginSuccess }) => {
 
   const handleCreateAccount = () => {
     setCurrentView('roleSelection');
+    // Update URL without full navigation
+    navigate('/staff-login?view=roleSelection', { replace: true });
   };
 
   const handleBackToLogin = () => {
     setCurrentView('login');
+    // Update URL back to login
+    navigate('/staff-login', { replace: true });
   };
 
   const handleRoleSelect = (role) => {
     if (role === 'internal') {
       setCurrentView('internalRegister');
+      navigate('/staff-login?view=internalRegister', { replace: true });
     } else if (role === 'external') {
       setCurrentView('externalRegister');
+      navigate('/staff-login?view=externalRegister', { replace: true });
     }
   };
 
   const handleRegistrationSuccess = (newStaff) => {
     setCurrentView('login');
+    navigate('/staff-login', { replace: true });
     setLoginData(prev => ({
       ...prev,
       email: newStaff.email
@@ -117,6 +163,11 @@ const StaffLogin = ({ onBackToHome, onLoginSuccess }) => {
     } else {
       setErrorMessage('Email not found. Please check your email or register first.');
     }
+  };
+
+  // Add a back to home button for better UX
+  const handleBackToHome = () => {
+    navigate('/', { replace: true });
   };
 
   // Render different views based on currentView state
@@ -153,6 +204,12 @@ const StaffLogin = ({ onBackToHome, onLoginSuccess }) => {
       <div className="login-image-section"></div>
 
       <div className="login-form-section">
+        {/* Add back to home button */}
+        <button className="back-to-home-btn" onClick={handleBackToHome} title="Back to Home">
+          <span className="back-arrow">←</span>
+          <span className="back-text">Back to Home</span>
+        </button>
+
         <div className="top-logo">
           <img src={sairamLogoImg} alt="Sairam Logo" className="sairam-logo-top" />
         </div>

@@ -17,6 +17,7 @@ const StaffDashboardPage = () => {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
   const navigate = useNavigate();
+  
 
   useEffect(() => {
     // Get mentor data from localStorage
@@ -62,6 +63,8 @@ const StaffDashboardPage = () => {
     // Automatically switch to completed tab to show the result
     setActiveTab('Completed');
   };
+
+  
 
   const filteredProjects = projects.filter(project => {
     const searchLower = searchTerm.toLowerCase();
@@ -178,7 +181,7 @@ const StaffDashboardPage = () => {
         
         <div className="header-right">
           <button className="logout-btn" onClick={handleLogout}>
-            <span className="logout-icon">🚪</span>
+           
             <span className="logout-text">Logout</span>
           </button>
           <div className="profile-icon">

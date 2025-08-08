@@ -36,6 +36,55 @@
   }
 }
 
+/* Error message styling */
+.error-message {
+  background-color: #fee;
+  border: 1px solid #fcc;
+  border-radius: 4px;
+  padding: 10px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.error-message p {
+  color: #c33;
+  margin: 0 0 10px 0;
+}
+
+.retry-btn {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.retry-btn:hover {
+  background-color: #0056b3;
+}
+
+/* Last updated timestamp */
+.last-updated {
+  text-align: center;
+  margin-top: 15px;
+}
+
+.last-updated small {
+  color: #666;
+  font-style: italic;
+}
+
+/* Loading state animation */
+.stat-number {
+  transition: all 0.3s ease;
+}
+
+.impact-stats .stat-card.loading .stat-number {
+  opacity: 0.6;
+}
+
 .hero-section::before {
   content: '';
   position: absolute;

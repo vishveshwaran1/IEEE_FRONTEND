@@ -1,7 +1,7 @@
 /* Role Selection Page Styles */
 .role-selection-page {
   display: flex;
-  height: 100vh;
+  height: 50vh;
   font-family: 'Poppins', sans-serif;
   background: #f8f9fa;
   overflow: hidden;
@@ -47,8 +47,8 @@
 /* Bottom Left IEEE Logo */
 .bottom-left-logo {
   position: absolute;
-  bottom: 1.5rem;
-  left: 1.5rem;
+  bottom: 0.5rem;
+  left: 0.5rem;
   z-index: 10;
 }
 
