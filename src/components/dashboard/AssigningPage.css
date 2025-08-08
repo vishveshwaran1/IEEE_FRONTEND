@@ -31,14 +31,17 @@
   background: #f0f4f9;
   border-radius: 8px;
   padding: 0.5rem 0.8rem;
-  border: 1px solid #e3eafc;
+  border: 2px solid #e3eafc;
+  transition: border-color 0.2s ease-in-out;
+}
+
+.search-input-wrapper:focus-within {
+  border-color: #0056b3;
 }
 
 .search-input-wrapper svg {
   width: 20px;
   height: 20px;
-  color: #6b7280;
-  margin-right: 0.5;
   color: #6b7280;
   margin-right: 0.5rem;
 }
@@ -49,7 +52,8 @@
   outline: none;
   font-size: 1rem;
   color: #333;
-  width: 250px;
+  width: 100%;
+  max-width: 250px;
 }
 
 .search-input::placeholder {

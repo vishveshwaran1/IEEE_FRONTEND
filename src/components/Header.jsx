@@ -3,7 +3,7 @@ import './Header.css';
 import ieeeLogoImg from '../assets/images/ieee-logo.jpeg';
 import sairamLogoImg from '../assets/images/logo.gif';
 
-const Header = ({ onStaffLogin }) => {
+const Header = ({ onStaffLogin, onNavigateToEvents }) => {
   return (
     <header className="header">
       <div className="header-container">
@@ -27,7 +27,7 @@ const Header = ({ onStaffLogin }) => {
               <a href="#projects" className="nav-link">Projects</a>
             </li>
             <li className="nav-item">
-              <a href="#events" className="nav-link">Events</a>
+              <a href="#events" className="nav-link" onClick={onNavigateToEvents}>Events</a>
             </li>
             <li className="nav-item">
               <a href="#achievements" className="nav-link">Achievements</a>

@@ -13,6 +13,7 @@ import ProjectInformation from './form-sections/ProjectInformation';
 import ProjectIdeaTechnicals from './form-sections/ProjectIdeaTechnicals';
 import FundingTimeline from './form-sections/FundingTimeline';
 import ImpactDeclaration from './form-sections/ImpactDeclaration';
+import Events from './form-sections/Events';
 
 const ApplicationForm = ({ onBackToHome }) => {
   // Load saved draft data if available
@@ -89,7 +90,7 @@ const ApplicationForm = ({ onBackToHome }) => {
   };
 
   const savedInfo = loadSavedData();
-  const [currentStep, setCurrentStep] = useState('instructions');
+  const [currentStep, setCurrentStep] = useState('events');
   const [formData, setFormData] = useState(savedInfo.data);
   const [isDraftLoaded, setIsDraftLoaded] = useState(savedInfo.isDraft);
   const [showDraftSaved, setShowDraftSaved] = useState(false);
@@ -271,6 +272,10 @@ const ApplicationForm = ({ onBackToHome }) => {
     setCurrentStep('documents');
   };
 
+  const handleEventsNext = () => {
+    setCurrentStep('instructions');
+  };
+
   return (
     <div className="application-page">
       <header className="application-header">
@@ -295,7 +300,7 @@ const ApplicationForm = ({ onBackToHome }) => {
                 <a href="#projects" className="nav-link">Projects</a>
               </li>
               <li className="nav-item">
-                <a href="#events" className="nav-link">Events</a>
+                <a href="#events" className="nav-link" onClick={() => setCurrentStep('events')}>Events</a>
               </li>
               <li className="nav-item">
                 <a href="#achievements" className="nav-link">Achievements</a>
@@ -316,6 +321,10 @@ const ApplicationForm = ({ onBackToHome }) => {
       </header>
 
       <div className="application-content">
+        {currentStep === 'events' && (
+          <Events onNext={handleEventsNext} />
+        )}
+
         {currentStep === 'instructions' && (
           <Instructions onNext={handleNextStep} />
         )}

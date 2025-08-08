@@ -13,169 +13,77 @@ import ProjectInformation from '../form-sections/ProjectInformation';
 import ProjectIdeaTechnicals from '../form-sections/ProjectIdeaTechnicals';
 import FundingTimeline from '../form-sections/FundingTimeline';
 import ImpactDeclaration from '../form-sections/ImpactDeclaration';
+import Events from './form-sections/Events';
+import { useNavigate } from 'react-router-dom';
 
 const ApplicationForm = ({ onBackToHome }) => {
-  // Load saved draft data if available
-  const loadSavedData = () => {
-    const savedDraft = localStorage.getItem('applicationFormDraft');
-    const savedData = localStorage.getItem('applicationFormData');
-    const savedStep = localStorage.getItem('applicationFormStep');
-    const savedVerificationState = localStorage.getItem('applicationFormVerification');
-    
-    let step = 'instructions';
-    let verificationStates = {
-      otpSent: false,
-      otpVerified: false
-    };
-    
-    // Load saved step and verification states if available
-    if (savedStep) {
-      step = savedStep;
-    }
-    
-    if (savedVerificationState) {
-      verificationStates = JSON.parse(savedVerificationState);
-    }
-    
-    if (savedDraft) {
-      return { 
-        data: JSON.parse(savedDraft), 
-        isDraft: true, 
-        step: step,
-        verification: verificationStates
-      };
-    } else if (savedData) {
-      return { 
-        data: JSON.parse(savedData), 
-        isDraft: false, 
-        step: step,
-        verification: verificationStates
-      };
-    }
-    
-    return {
-      data: {
-        studentId: '',
-        email: '',
-        otp: '',
-        // Basic Information (Section 1)
-        firstName: '',
-        lastName: '',
-        ieeeMembershipNo: '',
-        emailId: '',
-        phoneNo: '',
-        year: '',
-        department: '',
-        // Project Information (Section 2)
-        projectTitle: '',
-        primarySDGGoal: '',
-        teamSize: '',
-        mentorName: '',
-        mentorId: '',
-        sapCode: '',
-        // Project Idea & Technicals (Section 3)
-        problemStatement: '',
-        projectIdeaDescription: '',
-        projectMethodology: '',
-        technicalStack: '',
-        // Funding & Timeline (Section 4)
-        technologyReadinessLevel: 0,
-        trlJustification: '',
-        selectedSDGGoals: [],
-        sdgJustification: '',
-        fundingPrograms: {
-          standardsEducation: false,
-          studentSpecific: false,
-          societySpecific: false,
-          humanitarianCommunityService: false
-        },
-        fundingAmount: '',
-        selectedSDGs: [],
-        ieeFundingProgram: '',
-        // Budget Breakdown
-        budgetItems: [
-          {
-            id: 1,
-            items: '',
-            components: '',
-            quantity: '',
-            justification: ''
-          }
-        ],
-        // Project Timeline
-        projectStartDate: '',
-        projectEndDate: '',
-        keyMilestones: '',
-        // Impact & Declaration (Section 5)
-        targetBeneficiaries: '',
-        expectedOutcomes: '',
-        sustainabilityPlan: '',
-      },
-      isDraft: false,
-      step: 'instructions',
-      verification: verificationStates
-    };
-  };
-
-  const savedInfo = loadSavedData();
-  const [currentStep, setCurrentStep] = useState(savedInfo.step);
-  const [formData, setFormData] = useState(savedInfo.data);
-  const [isDraftLoaded, setIsDraftLoaded] = useState(savedInfo.isDraft);
+  const navigate = useNavigate();
+  const [formData, setFormData] = useState({});
+  const [currentStep, setCurrentStep] = useState('loading');
+  const [isDraftLoaded, setIsDraftLoaded] = useState(false);
   const [showDraftSaved, setShowDraftSaved] = useState(false);
-  
-  // Verification states - initialize from saved data
-  const [otpSent, setOtpSent] = useState(savedInfo.verification.otpSent);
-  const [otpVerified, setOtpVerified] = useState(savedInfo.verification.otpVerified);
+  const [otpSent, setOtpSent] = useState(false);
+  const [otpVerified, setOtpVerified] = useState(false);
   const [verificationLoading, setVerificationLoading] = useState(false);
   const [verificationMessage, setVerificationMessage] = useState('');
   const [pdfGenerating, setPdfGenerating] = useState(false);
   const [uploadedDocuments, setUploadedDocuments] = useState({});
 
-  // Auto-save functionality
-  useEffect(() => {
-    const autoSave = () => {
-      // Save current step and verification states
-      localStorage.setItem('applicationFormStep', currentStep);
-      localStorage.setItem('applicationFormVerification', JSON.stringify({
-        otpSent,
-        otpVerified
-      }));
-      
-      // Save form data if there's any content
-      const hasData = Object.values(formData).some(value => {
-        if (typeof value === 'string') return value.trim() !== '';
-        if (typeof value === 'object' && value !== null) return JSON.stringify(value) !== JSON.stringify({});
-        return value !== '' && value !== 0 && value !== false;
-      });
-      
-      if (hasData) {
-        localStorage.setItem('applicationFormDraft', JSON.stringify(formData));
+  const initialFormState = {
+    studentId: '',
+    email: '',
+    otp: '',
+    firstName: '',
+    lastName: '',
+    ieeeMembershipNo: '',
+    emailId: '',
+    phoneNo: '',
+    year: '',
+    department: '',
+    projectTitle: '',
+    primarySDGGoal: '',
+    teamSize: '',
+    mentorName: '',
+    mentorId: '',
+    sapCode: '',
+    problemStatement: '',
+    projectIdeaDescription: '',
+    projectMethodology: '',
+    technicalStack: '',
+    technologyReadinessLevel: 0,
+    trlJustification: '',
+    selectedSDGGoals: [],
+    sdgJustification: '',
+    fundingPrograms: {
+      standardsEducation: false,
+      studentSpecific: false,
+      societySpecific: false,
+      humanitarianCommunityService: false
+    },
+    fundingAmount: '',
+    selectedSDGs: [],
+    ieeFundingProgram: '',
+    budgetItems: [
+      {
+        id: 1,
+        items: '',
+        components: '',
+        quantity: '',
+        justification: ''
       }
-    };
+    ],
+    projectStartDate: '',
+    projectEndDate: '',
+    keyMilestones: '',
+    targetBeneficiaries: '',
+    expectedOutcomes: '',
+    sustainabilityPlan: '',
+  };
 
-    // Auto-save every 30 seconds if user is actively filling the form
-    const autoSaveInterval = setInterval(autoSave, 30000);
-
-    return () => clearInterval(autoSaveInterval);
-  }, [currentStep, formData, otpSent, otpVerified]);
-
-  // Add warning for page reload/close
   useEffect(() => {
-    const handleBeforeUnload = (e) => {
-      // Only show warning if user is in the middle of filling the form
-      if (currentStep === 'mainForm' || currentStep === 'documents' || currentStep === 'declaration') {
-        e.preventDefault();
-        e.returnValue = 'You have unsaved changes. Are you sure you want to leave?';
-        return 'You have unsaved changes. Are you sure you want to leave?';
-      }
-    };
-
-    window.addEventListener('beforeunload', handleBeforeUnload);
-
-    return () => {
-      window.removeEventListener('beforeunload', handleBeforeUnload);
-    };
-  }, [currentStep]);
+    setFormData(initialFormState);
+    setCurrentStep('events');
+  }, []);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -183,6 +91,16 @@ const ApplicationForm = ({ onBackToHome }) => {
       ...prev,
       [name]: value
     }));
+
+    if (name === 'studentId') {
+      const savedDraft = localStorage.getItem(`draft_${value}`);
+      if (savedDraft) {
+        if (window.confirm('You have a saved draft for this ID. Would you like to load it?')) {
+          setFormData(JSON.parse(savedDraft));
+          setIsDraftLoaded(true);
+        }
+      }
+    }
   };
 
   const handleSDGToggle = (sdgCode) => {
@@ -238,12 +156,10 @@ const ApplicationForm = ({ onBackToHome }) => {
     }
   };
 
-  // Generate PDF with supporting documents
   const generateApplicationPDF = async () => {
     setPdfGenerating(true);
     
     try {
-      // Import jsPDF dynamically
       const { jsPDF } = await import('jspdf');
       
       const pdf = new jsPDF('p', 'mm', 'a4');
@@ -252,25 +168,20 @@ const ApplicationForm = ({ onBackToHome }) => {
       const margin = 15;
       let yPosition = margin;
       
-      // Colors matching the application form
-      const primaryColor = [41, 128, 185]; // Blue
-      const secondaryColor = [52, 73, 94]; // Dark gray
+      const primaryColor = [41, 128, 185];
+      const secondaryColor = [52, 73, 94];
       const lightGray = [236, 240, 241];
       const textColor = [44, 62, 80];
       
-      // Helper function to add header section
       const addSectionHeader = (title, icon = '') => {
-        // Check if we need a new page
         if (yPosition > pageHeight - 40) {
           pdf.addPage();
           yPosition = margin;
         }
         
-        // Add background rectangle for section header
         pdf.setFillColor(236, 240, 241);
         pdf.rect(margin, yPosition - 5, pageWidth - 2 * margin, 15, 'F');
         
-        // Add section title
         pdf.setTextColor(41, 128, 185);
         pdf.setFontSize(14);
         pdf.setFont('helvetica', 'bold');
@@ -280,7 +191,6 @@ const ApplicationForm = ({ onBackToHome }) => {
         pdf.setTextColor(52, 73, 94);
       };
       
-      // Helper function to add field with label and value
       const addField = (label, value) => {
         const leftMargin = margin + 5;
         const labelWidth = 60;
@@ -308,14 +218,12 @@ const ApplicationForm = ({ onBackToHome }) => {
         
         yPosition += 8;
         
-        // Check if we need a new page
         if (yPosition > pageHeight - margin) {
           pdf.addPage();
           yPosition = margin;
         }
       };
       
-      // Header with logos and title
       pdf.setFillColor(...primaryColor);
       pdf.rect(0, 0, pageWidth, 25, 'F');
       
@@ -329,21 +237,18 @@ const ApplicationForm = ({ onBackToHome }) => {
       
       yPosition = 35;
       
-      // Student ID at the top - prominently displayed
       pdf.setFontSize(14);
       pdf.setFont('helvetica', 'bold');
       pdf.setTextColor(41, 128, 185);
       pdf.text(`STUDENT ID: ${formData.studentId || 'NOT PROVIDED'}`, pageWidth / 2, yPosition, { align: 'center' });
       yPosition += 15;
       
-      // Application Details Header
       pdf.setTextColor(44, 62, 80);
       pdf.setFontSize(12);
       pdf.text(`Application ID: APP_${formData.studentId || 'UNKNOWN'}_${Date.now()}`, margin, yPosition);
       pdf.text(`Generated: ${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()}`, pageWidth - margin - 50, yPosition);
       yPosition += 15;
       
-      // Section 1: Basic Information
       addSectionHeader('BASIC INFORMATION', '');
       addField('Student ID', formData.studentId);
       addField('First Name', formData.firstName);
@@ -355,7 +260,6 @@ const ApplicationForm = ({ onBackToHome }) => {
       addField('Department', formData.department);
       yPosition += 5;
       
-      // Section 2: Project Information
       addSectionHeader('PROJECT INFORMATION', '');
       addField('Project Title', formData.projectTitle);
       addField('Primary SDG Goal', formData.primarySDGGoal);
@@ -365,7 +269,6 @@ const ApplicationForm = ({ onBackToHome }) => {
       addField('SAP Code', formData.sapCode);
       yPosition += 5;
       
-      // Section 3: Project Idea & Technicals
       addSectionHeader('PROJECT IDEA & TECHNICALS', '');
       addField('Problem Statement', formData.problemStatement);
       addField('Project Idea Description', formData.projectIdeaDescription);
@@ -373,7 +276,6 @@ const ApplicationForm = ({ onBackToHome }) => {
       addField('Technical Stack', formData.technicalStack);
       yPosition += 5;
       
-      // Section 4: Funding & Timeline
       addSectionHeader('FUNDING & TIMELINE', '');
       addField('Technology Readiness Level', formData.technologyReadinessLevel?.toString());
       addField('TRL Justification', formData.trlJustification);
@@ -396,7 +298,6 @@ const ApplicationForm = ({ onBackToHome }) => {
       addField('IEEE Funding Program', formData.ieeFundingProgram);
       yPosition += 5;
       
-      // Section 5: Budget Breakdown
       if (formData.budgetItems && formData.budgetItems.length > 0) {
         addSectionHeader('BUDGET BREAKDOWN', '');
         formData.budgetItems.forEach((item, index) => {
@@ -414,21 +315,18 @@ const ApplicationForm = ({ onBackToHome }) => {
         yPosition += 5;
       }
       
-      // Section 6: Project Timeline
       addSectionHeader('PROJECT TIMELINE', '');
       addField('Project Start Date', formData.projectStartDate);
       addField('Project End Date', formData.projectEndDate);
       addField('Key Milestones', formData.keyMilestones);
       yPosition += 5;
       
-      // Section 7: Impact & Declaration
       addSectionHeader('IMPACT & DECLARATION', '');
       addField('Target Beneficiaries', formData.targetBeneficiaries);
       addField('Expected Outcomes', formData.expectedOutcomes);
       addField('Sustainability Plan', formData.sustainabilityPlan);
       yPosition += 10;
       
-      // Section 8: Supporting Documents
       addSectionHeader('SUPPORTING DOCUMENTS', '');
       
       if (Object.keys(uploadedDocuments).length > 0) {
@@ -436,7 +334,6 @@ const ApplicationForm = ({ onBackToHome }) => {
           if (file) {
             const documentTitle = docType.replace(/([A-Z])/g, ' $1').trim();
             
-            // Document header
             pdf.setFontSize(11);
             pdf.setFont('helvetica', 'bold');
             pdf.setTextColor(41, 128, 185);
@@ -450,7 +347,6 @@ const ApplicationForm = ({ onBackToHome }) => {
             yPosition += 10;
             
             try {
-              // Check if file is an image
               if (file.type && file.type.startsWith('image/')) {
                 const canvas = document.createElement('canvas');
                 const ctx = canvas.getContext('2d');
@@ -459,13 +355,11 @@ const ApplicationForm = ({ onBackToHome }) => {
                 await new Promise((resolve, reject) => {
                   img.onload = () => {
                     try {
-                      // Calculate dimensions to fit on page
                       const maxWidth = pageWidth - 2 * margin - 20;
                       const maxHeight = 120;
                       
                       let { width, height } = img;
                       
-                      // Scale down if too large
                       const widthRatio = maxWidth / width;
                       const heightRatio = maxHeight / height;
                       const scale = Math.min(widthRatio, heightRatio, 1);
@@ -477,16 +371,13 @@ const ApplicationForm = ({ onBackToHome }) => {
                       canvas.height = height;
                       ctx.drawImage(img, 0, 0, width, height);
                       
-                      // Add to PDF
                       const imgData = canvas.toDataURL('image/jpeg', 0.8);
                       
-                      // Check if we need a new page
                       if (yPosition + height + 20 > pageHeight - margin) {
                         pdf.addPage();
                         yPosition = margin;
                       }
                       
-                      // Add border around image
                       pdf.setDrawColor(200, 200, 200);
                       pdf.rect(margin + 10, yPosition, width + 4, height + 4);
                       
@@ -506,7 +397,6 @@ const ApplicationForm = ({ onBackToHome }) => {
                 pdf.text('PDF Document - Content cannot be displayed inline', margin + 15, yPosition + 8);
                 yPosition += 20;
               } else if (file.type && file.type.startsWith('text/')) {
-                // For text files, try to read and display content
                 const reader = new FileReader();
                 await new Promise((resolve) => {
                   reader.onload = (e) => {
@@ -554,7 +444,6 @@ const ApplicationForm = ({ onBackToHome }) => {
         yPosition += 15;
       }
       
-      // Declaration Section
       addSectionHeader('DECLARATION', 'DECLARATION');
       
       pdf.setFontSize(10);
@@ -576,13 +465,11 @@ const ApplicationForm = ({ onBackToHome }) => {
       addField('Digital Signature', `${formData.firstName || ''} ${formData.lastName || ''}`.trim() || 'Student');
       addField('Student ID', formData.studentId || 'Not provided');
       
-      // Footer
       yPosition = pageHeight - 20;
       pdf.setFontSize(8);
       pdf.setTextColor(108, 117, 125);
       pdf.text('This document was generated automatically by the IEEE Sairam Funding Application System', pageWidth / 2, yPosition, { align: 'center' });
       
-      // Save the PDF
       pdf.save(`IEEE_Application_${formData.studentId || 'Unknown'}_${Date.now()}.pdf`);
       
     } catch (error) {
@@ -593,15 +480,23 @@ const ApplicationForm = ({ onBackToHome }) => {
     }
   };
 
+  const handleEventsNext = () => {
+    setCurrentStep('instructions');
+  };
+
   const handleNextStep = () => {
-    localStorage.setItem('applicationFormStep', 'details');
     setCurrentStep('details');
   };
 
   const handleSendOTP = () => {
-    // Validate Student ID and email first
     if (!formData.studentId || formData.studentId.trim().length < 5) {
       setVerificationMessage('Please enter a valid Student ID');
+      return;
+    }
+
+    const submittedIDs = JSON.parse(localStorage.getItem('submittedIDs') || '[]');
+    if (submittedIDs.includes(formData.studentId)) {
+      setVerificationMessage('This Student ID has already been used for an application.');
       return;
     }
     
@@ -614,22 +509,15 @@ const ApplicationForm = ({ onBackToHome }) => {
     setVerificationLoading(true);
     setVerificationMessage('Sending OTP...');
     
-    // Simulate OTP sending
     setTimeout(() => {
       setOtpSent(true);
       setVerificationLoading(false);
       setVerificationMessage('OTP sent successfully to your email');
-      // Save verification state
-      localStorage.setItem('applicationFormVerification', JSON.stringify({
-        otpSent: true,
-        otpVerified: false
-      }));
       console.log('OTP sent to:', formData.email, 'for Student ID:', formData.studentId);
     }, 2000);
   };
 
   const handleVerify = () => {
-    // Validate OTP
     if (!formData.otp || formData.otp.length !== 6) {
       setVerificationMessage('Please enter a valid 6-digit OTP');
       return;
@@ -638,20 +526,13 @@ const ApplicationForm = ({ onBackToHome }) => {
     setVerificationLoading(true);
     setVerificationMessage('Verifying OTP...');
     
-    // Simulate OTP verification
     setTimeout(() => {
-      // For demo purposes, accept any 6-digit OTP
       const isValidOTP = /^\d{6}$/.test(formData.otp);
       
       if (isValidOTP) {
         setOtpVerified(true);
         setVerificationLoading(false);
         setVerificationMessage(`Verification successful for Student ID: ${formData.studentId}`);
-        // Save verification state
-        localStorage.setItem('applicationFormVerification', JSON.stringify({
-          otpSent: true,
-          otpVerified: true
-        }));
       } else {
         setVerificationLoading(false);
         setVerificationMessage('Invalid OTP. Please try again.');
@@ -660,7 +541,6 @@ const ApplicationForm = ({ onBackToHome }) => {
   };
 
   const handleContinue = () => {
-    // Only allow continue if OTP is verified and Student ID is entered
     if (!otpVerified) {
       setVerificationMessage('Please verify your OTP first');
       return;
@@ -669,79 +549,62 @@ const ApplicationForm = ({ onBackToHome }) => {
       setVerificationMessage('Please enter your Student ID');
       return;
     }
-    localStorage.setItem('applicationFormStep', 'mainForm');
     setCurrentStep('mainForm');
   };
 
   const handleDocumentsPrevious = () => {
-    localStorage.setItem('applicationFormStep', 'mainForm');
     setCurrentStep('mainForm');
   };
 
   const handleDocumentsNext = () => {
-    // Move to declaration page
-    localStorage.setItem('applicationFormStep', 'declaration');
     setCurrentStep('declaration');
   };
 
   const handleDeclarationPrevious = () => {
-    localStorage.setItem('applicationFormStep', 'documents');
     setCurrentStep('documents');
   };
 
   const handleDeclarationSubmit = async () => {
-    // Generate and download PDF
     await generateApplicationPDF();
+
+    const submittedIDs = JSON.parse(localStorage.getItem('submittedIDs') || '[]');
+    submittedIDs.push(formData.studentId);
+    localStorage.setItem('submittedIDs', JSON.stringify(submittedIDs));
     
-    // Clear all form data from localStorage after successful submission
-    localStorage.removeItem('applicationFormDraft');
-    localStorage.removeItem('applicationFormData');
-    localStorage.removeItem('applicationFormStep');
-    localStorage.removeItem('applicationFormVerification');
+    localStorage.removeItem(`draft_${formData.studentId}`);
     
-    // Redirect back to landing page
     if (onBackToHome) {
       onBackToHome();
     }
   };
 
   const handleSaveAsDraft = () => {
-    // Save form data, current step, and verification states to localStorage
-    localStorage.setItem('applicationFormDraft', JSON.stringify(formData));
-    localStorage.setItem('applicationFormStep', currentStep);
-    localStorage.setItem('applicationFormVerification', JSON.stringify({
-      otpSent,
-      otpVerified
-    }));
+    localStorage.setItem(`draft_${formData.studentId}`, JSON.stringify(formData));
     
-    setIsDraftLoaded(true);
     setShowDraftSaved(true);
     
-    // Hide the draft saved indicator after 3 seconds
     setTimeout(() => {
       setShowDraftSaved(false);
     }, 3000);
   };
 
   const handleFormContinue = () => {
-    // Save current form data and proceed to documents
-    localStorage.setItem('applicationFormData', JSON.stringify(formData));
-    localStorage.setItem('applicationFormStep', 'documents');
-    localStorage.setItem('applicationFormVerification', JSON.stringify({
-      otpSent,
-      otpVerified
-    }));
-    // Clear draft since we're moving forward
-    localStorage.removeItem('applicationFormDraft');
-    setIsDraftLoaded(false);
+    localStorage.removeItem(`draft_${formData.studentId}`);
     setCurrentStep('documents');
   };
+
+  const handleNavClick = (path) => {
+    navigate(path);
+  };
+
+  if (currentStep === 'loading') {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div className="application-page">
       <header className="application-header">
         <div className="header-container">
-          {/* Logo Section */}
           <div className="logo-section">
             <div className="ieee-logo">
               <img src={ieeeLogoImg} alt="IEEE" className="ieee-image" />
@@ -751,28 +614,26 @@ const ApplicationForm = ({ onBackToHome }) => {
             </div>
           </div>
 
-          {/* Navigation Menu */}
           <nav className="navigation">
             <ul className="nav-menu">
               <li className="nav-item">
-                <a href="#about" className="nav-link">About</a>
+                <a href="/#about" onClick={() => handleNavClick('/#about')} className="nav-link">About</a>
               </li>
               <li className="nav-item">
-                <a href="#projects" className="nav-link">Projects</a>
+                <a href="/#projects" onClick={() => handleNavClick('/#projects')} className="nav-link">Projects</a>
               </li>
               <li className="nav-item">
-                <a href="#events" className="nav-link">Events</a>
+                <a href="/#events" className="nav-link">Events</a>
               </li>
               <li className="nav-item">
-                <a href="#achievements" className="nav-link">Achievements</a>
+                <a href="/#achievements" onClick={() => handleNavClick('/#achievements')} className="nav-link">Achievements</a>
               </li>
               <li className="nav-item">
-                <a href="#contact" className="nav-link">Contact</a>
+                <a href="/#contact" onClick={() => handleNavClick('/#contact')} className="nav-link">Contact</a>
               </li>
             </ul>
           </nav>
 
-          {/* Back to Home Button */}
           <div className="header-actions">
             <button className="back-to-home-btn" onClick={onBackToHome}>
               ← Back to Home
@@ -782,6 +643,10 @@ const ApplicationForm = ({ onBackToHome }) => {
       </header>
 
       <div className="application-content">
+        {currentStep === 'events' && (
+          <Events onNext={handleEventsNext} />
+        )}
+
         {currentStep === 'instructions' && (
           <Instructions onNext={handleNextStep} />
         )}
@@ -828,9 +693,6 @@ const ApplicationForm = ({ onBackToHome }) => {
                   {showDraftSaved && (
                     <span className="draft-indicator">✓ Draft Saved</span>
                   )}
-                  {isDraftLoaded && !showDraftSaved && (
-                    <span className="draft-loaded-indicator">📄 Draft Loaded</span>
-                  )}
                 </div>
               </div>
 
@@ -863,7 +725,6 @@ const ApplicationForm = ({ onBackToHome }) => {
                 handleInputChange={handleInputChange}
               />
 
-              {/* Application Form Footer */}
               <div className="application-form-footer">
                 <button 
                   type="button"

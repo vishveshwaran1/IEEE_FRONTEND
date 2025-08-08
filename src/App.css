@@ -271,19 +271,16 @@
 .projects-wrapper {
   position: relative;
   display: flex;
+  justify-content: center;
   align-items: center;
   gap: 1rem;
+  overflow: hidden;
 }
 
 .projects-scroll {
   display: flex;
   gap: 1.5rem;
-  overflow-x: auto;
-  scroll-behavior: smooth;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-  flex: 1;
-  padding: 0 1rem;
+  animation: scroll 30s linear infinite;
 }
 
 .projects-scroll::-webkit-scrollbar {
@@ -303,8 +300,8 @@
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
   transition: all 0.3s ease;
   cursor: pointer;
-  width: 280px;
-  height: 280px;
+  width: 320px;
+  height: 320px;
   flex-shrink: 0;
   border: 1px solid #e0e6ed;
   display: flex;
@@ -312,7 +309,7 @@
 }
 
 .project-card:hover {
-  transform: translateX(10px);
+  transform: translateY(-5px);
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
 }
 
@@ -747,6 +744,15 @@
   .scroll-right {
     margin: 0;
     align-self: center;
+  }
+}
+
+@keyframes scroll {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(calc(-320px * 6));
   }
 }
 

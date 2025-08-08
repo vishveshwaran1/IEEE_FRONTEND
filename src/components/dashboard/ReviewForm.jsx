@@ -1,7 +1,7 @@
+0,0
 import React, { useState } from 'react';
-import './ReviewForm.css';
 
-const ReviewForm = ({ project, onSubmit, onCancel }) => {
+const ReviewForm = ({ onCancel, onSubmit }) => {
   const [reviewData, setReviewData] = useState({
     innovation: 0,
     feasibility: 0,
@@ -11,111 +11,73 @@ const ReviewForm = ({ project, onSubmit, onCancel }) => {
     feedback: ''
   });
 
-  const criteria = [
-    { key: 'innovation', label: 'Innovation & Creativity' },
-    { key: 'feasibility', label: 'Feasibility' },
-    { key: 'technical', label: 'Technical Implementation' },
-    { key: 'impact', label: 'Impact on SDG Goals' },
-    { key: 'scalability', label: 'Scalability' }
+  const handleInputChange = (field, value) => {
+    setReviewData(prev => ({ ...prev, [field]: value }));
+  };
+
+  const handleSubmit = () => {
+    onSubmit(reviewData);
+  };
+
+  const ratingCategories = [
+    { id: 'innovation', label: 'Innovation & Creativity' },
+    { id: 'feasibility', label: 'Feasibility' },
+    { id: 'technical', label: 'Technical Implementation' },
+    { id: 'impact', label: 'Impact on SDG Goals' },
+    { id: 'scalability', label: 'Scalability' },
   ];
 
-  const handleRatingChange = (criterion, rating) => {
-    setReviewData(prev => ({
-      ...prev,
-      [criterion]: rating
-    }));
-  };
-
-  const handleFeedbackChange = (e) => {
-    setReviewData(prev => ({
-      ...prev,
-      feedback: e.target.value
-    }));
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    
-    // Validate that all ratings are provided
-    const allRated = criteria.every(criterion => reviewData[criterion.key] > 0);
-    if (!allRated) {
-      alert('Please provide ratings for all criteria');
-      return;
-    }
-
-    onSubmit({
-      ...reviewData,
-      timestamp: new Date().toISOString(),
-      projectId: project.id
-    });
-  };
-
-  const RatingStars = ({ rating, onChange }) => {
-    return (
-      <div className="rating-stars">
-        {[1, 2, 3, 4, 5].map((star) => (
-          <button
-            key={star}
-            type="button"
-            className={`star ${star <= rating ? 'filled' : ''}`}
-            onClick={() => onChange(star)}
-          >
-            <svg viewBox="0 0 24 24" fill="currentColor">
-              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-            </svg>
-          </button>
-        ))}
-      </div>
-    );
-  };
-
   return (
-    <div className="review-form-overlay">
-      <div className="review-form-container">
-        <div className="review-form-header">
-          <h3>Review: {project.title}</h3>
-          <button className="close-btn" onClick={onCancel}>
-            <svg viewBox="0 0 24 24" fill="currentColor">
-              <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
-            </svg>
-          </button>
-        </div>
-        
-        <form className="review-form" onSubmit={handleSubmit}>
-          <div className="criteria-section">
-            {criteria.map((criterion) => (
-              <div key={criterion.key} className="criterion-row">
-                <label className="criterion-label">{criterion.label}</label>
-                <RatingStars
-                  rating={reviewData[criterion.key]}
-                  onChange={(rating) => handleRatingChange(criterion.key, rating)}
-                />
-              </div>
-            ))}
-          </div>
-          
-          <div className="feedback-section">
-            <label htmlFor="feedback" className="feedback-label">Feedback</label>
-            <textarea
-              id="feedback"
-              className="feedback-input"
-              value={reviewData.feedback}
-              onChange={handleFeedbackChange}
-              placeholder="Provide detailed feedback for the project..."
-              rows={4}
-              required
+    <div className="review-form">
+      <h4>Review Project</h4>
+      
+      <div className="rating-categories">
+        {ratingCategories.map(category => (
+          <div className="rating-item" key={category.id}>
+            <label>{category.label}</label>
+            <input
+              type="number"
+              min="0"
+              max="10"
+              value={reviewData[category.id]}
+              onChange={(e) => handleInputChange(category.id, parseInt(e.target.value) || 0)}
+              className="rating-input"
+              placeholder="0-10"
             />
           </div>
-          
-          <div className="form-actions">
-            <button type="button" className="cancel-btn" onClick={onCancel}>
-              Cancel
-            </button>
-            <button type="submit" className="submit-btn">
-              Submit Review
-            </button>
+        ))}
+      </div>
+      
+      <div className="feedback-section">
+        <label>Feedback</label>
+        <div className="feedback-input-container">
+          <textarea
+            value={reviewData.feedback}
+            onChange={(e) => handleInputChange('feedback', e.target.value)}
+            placeholder="Enter your feedback here..."
+            maxLength={500}
+            className="feedback-textarea"
+          />
+          <div className="feedback-meta">
+            <span className="char-count">{reviewData.feedback.length}/500</span>
+            <button className="attachment-btn">📎</button>
           </div>
-        </form>
+        </div>
+      </div>
+      
+      <div className="review-form-actions">
+        <button 
+          className="cancel-review-btn"
+          onClick={onCancel}
+        >
+          Cancel
+        </button>
+        <button 
+          className="submit-review-btn"
+          onClick={handleSubmit}
+        >
+          Submit
+        </button>
       </div>
     </div>
   );
