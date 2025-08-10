@@ -17,10 +17,8 @@ const StaffDashboardPage = () => {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
   const navigate = useNavigate();
-  
 
   useEffect(() => {
-    // Get mentor data from localStorage
     const storedMentorData = localStorage.getItem('loggedInMentor');
     if (storedMentorData) {
       setMentorData(JSON.parse(storedMentorData));
@@ -28,17 +26,9 @@ const StaffDashboardPage = () => {
       navigate('/staff-login');
     }
 
-    // Initialize sample application data
     initializeSampleData();
-    
-    // In a real app, this would be an API call.
-    // For now, we load from our sample data file.
     setProjects(sampleProjects);
   }, [navigate]);
-
-  const toggleSidebar = () => {
-    setSidebarCollapsed(!sidebarCollapsed);
-  };
 
   const handleLogout = () => {
     localStorage.removeItem('loggedInMentor');
@@ -48,7 +38,6 @@ const StaffDashboardPage = () => {
 
   const handleReview = (projectId, reviewFormData) => {
     console.log('Review submitted for project:', projectId, reviewFormData);
-    // Update project status and move to completed
     setProjects(prevProjects => 
       prevProjects.map(project => 
         project.id === projectId 
@@ -57,14 +46,9 @@ const StaffDashboardPage = () => {
       )
     );
     
-    // Reset review form and close
     setShowReviewForm(null);
-    
-    // Automatically switch to completed tab to show the result
     setActiveTab('Completed');
   };
-
-  
 
   const filteredProjects = projects.filter(project => {
     const searchLower = searchTerm.toLowerCase();
@@ -92,25 +76,23 @@ const StaffDashboardPage = () => {
       format: 'a4'
     });
 
+    // PDF generation logic (keeping existing implementation)
     const margin = 15;
     const pageWidth = doc.internal.pageSize.getWidth();
     const usableWidth = pageWidth - 2 * margin;
     let y = margin;
 
-    // Helper to add text and manage Y position
     const addWrappedText = (text, x, yPos, options = {}) => {
       const lines = doc.splitTextToSize(text, options.maxWidth || usableWidth);
       doc.text(lines, x, yPos, options);
-      return yPos + (lines.length * 7); // Approx line height in mm
+      return yPos + (lines.length * 7);
     };
 
-    // --- Header ---
     doc.setFontSize(22);
     doc.setFont(undefined, 'bold');
     doc.text(project.title, pageWidth / 2, y, { align: 'center' });
     y += 10;
 
-    // --- Sub-Header ---
     doc.setFontSize(12);
     doc.setFont(undefined, 'normal');
     doc.text(`Team: ${project.teamName}`, margin, y);
@@ -118,12 +100,10 @@ const StaffDashboardPage = () => {
     doc.text(`Status: ${project.status}`, pageWidth - margin, y, { align: 'right' });
     y += 10;
 
-    // --- Separator ---
     doc.setDrawColor(220, 220, 220);
     doc.line(margin, y, pageWidth - margin, y);
     y += 10;
 
-    // --- Problem Statement ---
     doc.setFontSize(14);
     doc.setFont(undefined, 'bold');
     doc.text('Problem Statement', margin, y);
@@ -133,7 +113,6 @@ const StaffDashboardPage = () => {
     y = addWrappedText(project.problemStatement, margin, y);
     y += 10;
 
-    // --- Project Description ---
     doc.setFontSize(14);
     doc.setFont(undefined, 'bold');
     doc.text('Project Description', margin, y);
@@ -141,8 +120,6 @@ const StaffDashboardPage = () => {
     doc.setFontSize(11);
     doc.setFont(undefined, 'normal');
     y = addWrappedText(project.description, margin, y);
-
-    // --- Review Section (if applicable) ---
 
     doc.save(`${project.teamName} - ${project.title}.pdf`);
   };
@@ -156,131 +133,187 @@ const StaffDashboardPage = () => {
   }
 
   return (
-    <div className={`staff-dashboard-page ${sidebarCollapsed ? 'sidebar-collapsed' : ''}`}>
-      {/* Header */}
-      <header className="staff-dashboard-header">
+    <div className="dashboard-container">
+      {/* Professional Header */}
+      
+
+      <header className="dashboard-header">
+        
         <div className="header-left">
-          <button className="sidebar-toggle-btn" onClick={toggleSidebar} aria-label="Toggle sidebar">
-            <div className="hamburger-icon">
+          <button 
+            className="sidebar-toggle"
+            onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
+            aria-label="Toggle sidebar"
+          >
+            
+            <div className="hamburger">
               <span></span>
               <span></span>
               <span></span>
             </div>
           </button>
-          <div className="staff-profile">
-            <div className="staff-info">
-              <h2 className="staff-name">
-                {mentorData.name || `${mentorData.firstName || ''} ${mentorData.lastName || ''}`.trim() || 'Ulaganathan M S'}
-              </h2>
-              <p className="staff-id">
-                Staff ID: {mentorData.staffId || mentorData.id || 'ST001'}
-              </p>
-            </div>
+          
+          <div className="header-title">
+            <h1>Staff Dashboard</h1>
+            <span className="breadcrumb">Project Management / {activeTab}</span>
           </div>
         </div>
-        
+
         <div className="header-right">
+          <div className="staff-info">
+            <span className="staff-name">
+              {mentorData.name || `${mentorData.firstName || ''} ${mentorData.lastName || ''}`.trim() || 'Staff Member'}
+            </span>
+            <span className="staff-id">
+              ID: {mentorData.staffId || mentorData.id || 'ST001'}
+            </span>
+          </div>
+          
           <button className="logout-btn" onClick={handleLogout}>
-           
-            <span className="logout-text">Logout</span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+              <polyline points="16,17 21,12 16,7"/>
+              <line x1="21" y1="12" x2="9" y2="12"/>
+            </svg>
+            Logout
           </button>
-          <div className="profile-icon">
-            {mentorData.name ? mentorData.name.split(' ').map(n => n[0]).join('').toUpperCase() : 'MS'}
+          
+          <div className="profile-avatar">
+            {mentorData.name ? mentorData.name.split(' ').map(n => n[0]).join('').toUpperCase() : 'SM'}
           </div>
         </div>
       </header>
 
-      {/* Main Content with Sidebar */}
       <div className="dashboard-body">
-        {/* Sidebar Navigation */}
-        <aside className={`dashboard-sidebar ${sidebarCollapsed ? 'collapsed' : ''}`}>
-          <div className="sidebar-nav">
-            <button 
-              className={`sidebar-nav-btn ${activeTab === 'Assigning' ? 'active' : ''}`}
-              onClick={() => setActiveTab('Assigning')}
-              title="Assigning"
-            >
-              <span className="nav-icon" >-||</span>
-              <span className="nav-text">Assigning</span>
-            </button>
-            <button 
-              className={`sidebar-nav-btn ${activeTab === 'Completed' ? 'active' : ''}`}
-              onClick={() => setActiveTab('Completed')}
-              title="Completed"
-            >
-              <span className="nav-icon">-||</span>
-              <span className="nav-text">Completed</span>
-            </button>
+        {/* Simplified Professional Sidebar - No Analytics */}
+        <aside className={`sidebar ${sidebarCollapsed ? 'collapsed' : ''}`}>
+          <div className="sidebar-header">
+            <div className="logo">
+              <img src={sairamLogo} alt="Logo" className="logo-img" />
+              
+            </div>
           </div>
+
+          <nav className="sidebar-nav">
+            <div className="nav-section">
+              <span className="nav-section-title">
+                {!sidebarCollapsed && 'Projects'}
+              </span>
+              
+              <button
+                className={`nav-item ${activeTab === 'Assigning' ? 'active' : ''}`}
+                onClick={() => setActiveTab('Assigning')}
+                title="Assigning Projects"
+              >
+                <svg className="nav-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
+                  <line x1="8" y1="21" x2="16" y2="21"/>
+                  <line x1="12" y1="17" x2="12" y2="21"/>
+                </svg>
+                <span className="nav-text">Assigning</span>
+                <span className="nav-badge">{assigningProjects.length}</span>
+              </button>
+
+              <button
+                className={`nav-item ${activeTab === 'Completed' ? 'active' : ''}`}
+                onClick={() => setActiveTab('Completed')}
+                title="Completed Projects"
+              >
+                <svg className="nav-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                  <polyline points="22,4 12,14.01 9,11.01"/>
+                </svg>
+                <span className="nav-text">Completed</span>
+                <span className="nav-badge">{completedProjects.length}</span>
+              </button>
+            </div>
+          </nav>
+
+
         </aside>
 
         {/* Main Content */}
-        <main className="dashboard-main-content">
-          {/* Search and Filter Bar */}
-          <div className="search-filter-container">
-            <input
-              type="text"
-              placeholder="Search by team name, title, SDG goal..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="search-input"
-            />
-            <button className="filter-btn" aria-label="Filter projects">
-              <span className="filter-icon">⌕</span>
-            </button>
-          </div>
+        <main className="main-content">
+          {/* Search Section */}
+          <div className="content-header">
+            <div className="search-container">
+              <div className="search-box">
+                <svg className="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                  <circle cx="11" cy="11" r="8"/>
+                  <path d="M21 21l-4.35-4.35"/>
+                </svg>
+                <input
+                  type="text"
+                  placeholder="Search projects, teams, SDG goals..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="search-input"
+                />
+              </div>
+            </div>
 
-          {activeTab === 'Assigning' && (
-            <>
-              <div className="projects-container">
-                {assigningProjects.map((project) => (
-                  <ProjectItem
-                    key={project.id}
-                    project={project}
-                    onDownload={handleDownload}
-                    onReview={() => setShowReviewForm(project.id)}
-                    showReviewForm={showReviewForm === project.id}
-                  >
-                    <ReviewForm
-                      onCancel={() => setShowReviewForm(null)}
-                      onSubmit={(reviewData) => handleReview(project.id, reviewData)}
-                    />
-                  </ProjectItem>
-                ))}
-              </div>
-            </>
-          )}
-        
-          {activeTab === 'Completed' && (
-            <div className="projects-container">
-              {completedProjects.length > 0 ? (
-                  completedProjects.map((project) => (
-                    <ProjectItem
-                      key={project.id}
-                      project={project}
-                      onDownload={handleDownload}
-                    />
-                  ))
-                ) : (
-                  <p className="no-completed-projects">No completed projects yet.</p>
-                )}
-              </div>
-          )}
-        </main>
-      </div>
-      <footer className="dashboard-footer">
-        <div className="footer-simple">
-          <div className="footer-left">
-            <div className="footer-logo">
-              <img src={sairamLogo} alt="Sairam Institutions" className="footer-logo-img" />
-  
+            <div className="content-actions">
+              <button className="filter-btn" title="Filter">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <polygon points="22,3 2,3 10,12.46 10,19 14,21 14,12.46"/>
+                </svg>
+              </button>
             </div>
           </div>
-          <div className="footer-right">
-            <p>&copy; 2025 Sairam Institutions. All rights reserved.</p>
+
+          {/* Project Content with Container */}
+          <div className="content-body">
+            <div className="projects-container">
+              {activeTab === 'Assigning' && (
+                <div className="projects-list">
+                  {assigningProjects.map((project) => (
+                    <div key={project.id} className="project-container">
+                      <ProjectItem
+                        project={project}
+                        onDownload={handleDownload}
+                        onReview={() => setShowReviewForm(project.id)}
+                        showReviewForm={showReviewForm === project.id}
+                      >
+                        <ReviewForm
+                          onCancel={() => setShowReviewForm(null)}
+                          onSubmit={(reviewData) => handleReview(project.id, reviewData)}
+                        />
+                      </ProjectItem>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {activeTab === 'Completed' && (
+                <div className="projects-list">
+                  {completedProjects.length > 0 ? (
+                    completedProjects.map((project) => (
+                      <div key={project.id} className="project-container">
+                        <ProjectItem
+                          project={project}
+                          onDownload={handleDownload}
+                        />
+                      </div>
+                    ))
+                  ) : (
+                    <div className="empty-state">
+                      <svg className="empty-icon" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1">
+                        <circle cx="12" cy="12" r="10"/>
+                        <path d="M12 6v6l4 2"/>
+                      </svg>
+                      <h3>No Completed Projects</h3>
+                      <p>Completed project reviews will appear here once you finish evaluating submissions.</p>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
           </div>
-        </div>
-      </footer>
+        </main>
+      </div>
+
+      {/* Updated Footer with Logo at Corner and Centered Content */}
+      
     </div>
   );
 };

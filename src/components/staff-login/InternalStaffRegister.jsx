@@ -145,8 +145,10 @@ const InternalStaffRegister = ({ onBackToLogin, onRegistrationSuccess }) => {
 
   const handleRegister = async (e) => {
     e.preventDefault();
+    console.log('Register button clicked');
     
     if (!validateForm()) {
+      console.log('Form validation failed');
       return;
     }
 
@@ -409,7 +411,7 @@ const InternalStaffRegister = ({ onBackToLogin, onRegistrationSuccess }) => {
         onClose={handleSuccessPopupClose}
         title="Internal Staff Registration Successful!"
         message={`Welcome ${registerData.firstName}! Your internal staff account has been created successfully. You can now login with your credentials.`}
-        autoCloseDelay={0}
+        autoCloseDelay={3000}
       />
     </>
   );

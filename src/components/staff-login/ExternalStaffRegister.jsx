@@ -68,8 +68,10 @@ const ExternalStaffRegister = ({ onBackToLogin, onRegistrationSuccess }) => {
 
   const handleRegister = async (e) => {
     e.preventDefault();
-    
+    console.log('Register button clicked');
+
     if (!validateForm()) {
+      console.log('Form validation failed');
       return;
     }
 
@@ -314,7 +316,7 @@ const ExternalStaffRegister = ({ onBackToLogin, onRegistrationSuccess }) => {
         onClose={handleSuccessPopupClose}
         title="External Staff Registration Successful!"
         message={`Welcome ${registerData.firstName}! Your external staff account has been created successfully. You can now login with your credentials.`}
-        autoCloseDelay={0} // Manual close only
+        autoCloseDelay={3000} // Manual close only
       />
     </>
   );
