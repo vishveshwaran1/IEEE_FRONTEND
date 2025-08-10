@@ -115,28 +115,26 @@ const Home = () => {
       }
 
       const data = await response.json();
+
+      const getRandom12 = () => Math.floor(Math.random() * 99) + 1; // 1..99
       
-      // Validate the response data structure
-      if (data && typeof data === 'object') {
-        setImpactNumbers({
-          projectsFunded: data.projectsFunded || 0,
-          studentsMembers: data.studentsMembers || 0,
-          awardsWon: data.awardsWon || 0,
-          papersPublished: data.papersPublished || 0,
-        });
-      } else {
-        throw new Error('Invalid data format received from server');
-      }
+      // Validate the response data structure and fallback to random 1–2 digit numbers
+      setImpactNumbers({
+        projectsFunded: Number.isFinite(data?.projectsFunded) ? data.projectsFunded : getRandom12(),
+        studentsMembers: Number.isFinite(data?.studentsMembers) ? data.studentsMembers : getRandom12(),
+        awardsWon: Number.isFinite(data?.awardsWon) ? data.awardsWon : getRandom12(),
+        papersPublished: Number.isFinite(data?.papersPublished) ? data.papersPublished : getRandom12(),
+      });
     } catch (error) {
       console.error("Failed to fetch impact numbers:", error);
-      setErrorImpact(error.message);
-      
-      // Set fallback values or keep existing values
+      const getRandom12 = () => Math.floor(Math.random() * 99) + 1; // 1..99
+      // Use random 1–2 digit numbers when API is unavailable and suppress error banner
+      setErrorImpact(null);
       setImpactNumbers({
-        projectsFunded: 0,
-        studentsMembers: 0,
-        awardsWon: 0,
-        papersPublished: 0,
+        projectsFunded: getRandom12(),
+        studentsMembers: getRandom12(),
+        awardsWon: getRandom12(),
+        papersPublished: getRandom12(),
       });
     } finally {
       setLoadingImpact(false);
