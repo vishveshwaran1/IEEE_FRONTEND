@@ -9,6 +9,12 @@ import StaffLogin from './components/staff-login/StaffLogin';
 import Dashboard from './components/dashboard/Dashboard';
 import StaffDashboardPage from './components/dashboard/StaffDashboardPage';
 
+// Admin components imports
+import { AdminAuthProvider } from './components/admin/AdminAuthContext';
+import AdminLogin from './components/admin/AdminLogin';
+import AdminDashboard from './components/admin/AdminDashboard';
+import ProtectedAdminRoute from './components/admin/ProtectedAdminRoute';
+
 import './App.css';
 
 import footerLogoImg from './assets/images/footer-logo.png';
@@ -386,19 +392,45 @@ function App() {
     return <StaffLogin onBackToHome={() => navigate('/')} onLoginSuccess={onLoginSuccess} />;
   };
 
+  // Admin wrapper components
+  const AdminLoginWrapper = () => {
+    const navigate = useNavigate();
+    
+    const onLoginSuccess = (adminData) => {
+      navigate('/admin/dashboard');
+    };
+
+    return <AdminLogin onBackToHome={() => navigate('/')} onLoginSuccess={onLoginSuccess} />;
+  };
+
+  const AdminDashboardWrapper = () => {
+    return (
+      <ProtectedAdminRoute>
+        <AdminDashboard />
+      </ProtectedAdminRoute>
+    );
+  };
+
   return (
-    <Router>
-      <div className="App">
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/application" element={<ApplicationFormWrapper />} />
-          <Route path="/staff-login" element={<StaffLoginWrapper />} />
-          <Route path="/dashboard/*" element={isLoggedIn ? <Dashboard /> : <Navigate to="/staff-login" />} />
-          <Route path="/staff-dashboard" element={isLoggedIn ? <StaffDashboardPage /> : <Navigate to="/staff-login" />} />
-          <Route path="*" element={<Navigate to="/" />} />
-        </Routes>
-      </div>
-    </Router>
+    <AdminAuthProvider>
+      <Router>
+        <div className="App">
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/application" element={<ApplicationFormWrapper />} />
+            <Route path="/staff-login" element={<StaffLoginWrapper />} />
+            <Route path="/dashboard/*" element={isLoggedIn ? <Dashboard /> : <Navigate to="/staff-login" />} />
+            <Route path="/staff-dashboard" element={isLoggedIn ? <StaffDashboardPage /> : <Navigate to="/staff-login" />} />
+            
+            {/* Admin routes */}
+            <Route path="/admin/login" element={<AdminLoginWrapper />} />
+            <Route path="/admin/dashboard/*" element={<AdminDashboardWrapper />} />
+            
+            <Route path="*" element={<Navigate to="/" />} />
+          </Routes>
+        </div>
+      </Router>
+    </AdminAuthProvider>
   );
 }
 
