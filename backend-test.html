@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Backend Connectivity Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 5px; }
+        .success { background-color: #d4edda; border-color: #c3e6cb; color: #155724; }
+        .error { background-color: #f8d7da; border-color: #f5c6cb; color: #721c24; }
+        .loading { background-color: #fff3cd; border-color: #ffeaa7; color: #856404; }
+        button { padding: 10px 20px; margin: 5px; cursor: pointer; }
+        pre { background-color: #f8f9fa; padding: 10px; border-radius: 3px; overflow-x: auto; }
+    </style>
+</head>
+<body>
+    <h1>IEEE Backend Connectivity Test</h1>
+    
+    <div class="test-section">
+        <h3>Test 1: Basic Backend Access</h3>
+        <button onclick="testBasicAccess()">Test Basic Access</button>
+        <div id="basic-result"></div>
+    </div>
+
+    <div class="test-section">
+        <h3>Test 2: Impact Numbers API</h3>
+        <button onclick="testImpactNumbers()">Test Impact Numbers</button>
+        <div id="impact-result"></div>
+    </div>
+
+    <div class="test-section">
+        <h3>Test 3: OTP Send API</h3>
+        <button onclick="testOTPSend()">Test OTP Send</button>
+        <div id="otp-result"></div>
+    </div>
+
+    <div class="test-section">
+        <h3>Test 4: Application Submit API (without auth)</h3>
+        <button onclick="testApplicationSubmit()">Test Application Submit</button>
+        <div id="app-result"></div>
+    </div>
+
+    <script>
+        const BASE_URL = 'https://ieee-backend-1-82p1.onrender.com';
+        
+        function showResult(elementId, content, type = 'loading') {
+            const element = document.getElementById(elementId);
+            element.className = `test-section ${type}`;
+            element.innerHTML = content;
+        }
+
+        async function testBasicAccess() {
+            showResult('basic-result', 'Testing basic backend access...', 'loading');
+            
+            try {
+                const response = await fetch(BASE_URL, {
+                    method: 'GET',
+                    mode: 'cors'
+                });
+                
+                const result = `
+                    <h4>✅ Basic Access Successful</h4>
+                    <p><strong>Status:</strong> ${response.status} ${response.statusText}</p>
+                    <p><strong>Headers:</strong></p>
+                    <pre>${JSON.stringify(Object.fromEntries(response.headers.entries()), null, 2)}</pre>
+                `;
+                
+                showResult('basic-result', result, 'success');
+            } catch (error) {
+                const result = `
+                    <h4>❌ Basic Access Failed</h4>
+                    <p><strong>Error:</strong> ${error.message}</p>
+                    <p><strong>Type:</strong> ${error.name}</p>
+                `;
+                showResult('basic-result', result, 'error');
+            }
+        }
+
+        async function testImpactNumbers() {
+            showResult('impact-result', 'Testing impact numbers API...', 'loading');
+            
+            try {
+                const response = await fetch(`${BASE_URL}/api/impact-numbers`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    mode: 'cors'
+                });
+                
+                const data = await response.json();
+                
+                const result = `
+                    <h4>✅ Impact Numbers API Successful</h4>
+                    <p><strong>Status:</strong> ${response.status} ${response.statusText}</p>
+                    <p><strong>Response Data:</strong></p>
+                    <pre>${JSON.stringify(data, null, 2)}</pre>
+                `;
+                
+                showResult('impact-result', result, 'success');
+            } catch (error) {
+                const result = `
+                    <h4>❌ Impact Numbers API Failed</h4>
+                    <p><strong>Error:</strong> ${error.message}</p>
+                    <p><strong>Type:</strong> ${error.name}</p>
+                `;
+                showResult('impact-result', result, 'error');
+            }
+        }
+
+        async function testOTPSend() {
+            showResult('otp-result', 'Testing OTP send API...', 'loading');
+            
+            try {
+                const response = await fetch(`${BASE_URL}/api/auth/send-login-otp`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email: 'test@example.com' }),
+                    mode: 'cors'
+                });
+                
+                const data = await response.json();
+                
+                const result = `
+                    <h4>✅ OTP Send API Successful</h4>
+                    <p><strong>Status:</strong> ${response.status} ${response.statusText}</p>
+                    <p><strong>Response Data:</strong></p>
+                    <pre>${JSON.stringify(data, null, 2)}</pre>
+                `;
+                
+                showResult('otp-result', result, 'success');
+            } catch (error) {
+                const result = `
+                    <h4>❌ OTP Send API Failed</h4>
+                    <p><strong>Error:</strong> ${error.message}</p>
+                    <p><strong>Type:</strong> ${error.name}</p>
+                `;
+                showResult('otp-result', result, 'error');
+            }
+        }
+
+        async function testApplicationSubmit() {
+            showResult('app-result', 'Testing application submit API...', 'loading');
+            
+            try {
+                const testData = {
+                    studentId: 'TEST123',
+                    email: 'test@example.com',
+                    firstName: 'Test',
+                    lastName: 'User'
+                };
+                
+                const response = await fetch(`${BASE_URL}/api/applications/submit`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(testData),
+                    mode: 'cors'
+                });
+                
+                const data = await response.json();
+                
+                const result = `
+                    <h4>✅ Application Submit API Accessible</h4>
+                    <p><strong>Status:</strong> ${response.status} ${response.statusText}</p>
+                    <p><strong>Response Data:</strong></p>
+                    <pre>${JSON.stringify(data, null, 2)}</pre>
+                    <p><em>Note: This test is expected to fail authentication, but shows the API is reachable</em></p>
+                `;
+                
+                showResult('app-result', result, 'success');
+            } catch (error) {
+                const result = `
+                    <h4>❌ Application Submit API Failed</h4>
+                    <p><strong>Error:</strong> ${error.message}</p>
+                    <p><strong>Type:</strong> ${error.name}</p>
+                    <p><em>Note: This might be expected if the API requires authentication</em></p>
+                `;
+                showResult('app-result', result, 'error');
+            }
+        }
+
+        // Auto-run basic test on page load
+        window.onload = function() {
+            setTimeout(testBasicAccess, 1000);
+        };
+    </script>
+</body>
+</html> 

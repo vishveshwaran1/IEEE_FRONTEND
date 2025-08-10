@@ -103,7 +103,7 @@ const Home = () => {
     
     try {
       // Replace with your actual backend API endpoint
-      const response = await fetch('/api/impact-numbers', {
+      const response = await fetch('https://ieee-backend-1-82p1.onrender.com/api/impact-numbers', {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',

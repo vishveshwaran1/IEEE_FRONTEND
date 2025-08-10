@@ -20,7 +20,7 @@ import { useNavigate } from 'react-router-dom';
 
 // --- Aligned API Helper Functions ---
 const sendOTP = async (email) => {
-    const response = await fetch('http://localhost:5000/api/auth/send-login-otp', {
+    const response = await fetch('https://ieee-backend-1-82p1.onrender.com/api/auth/send-login-otp', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email }) // Only email is needed
@@ -33,7 +33,7 @@ const sendOTP = async (email) => {
 };
 
 const verifyOTP = async (email, otp) => {
-    const response = await fetch('http://localhost:5000/api/auth/verify-login-otp', {
+    const response = await fetch('https://ieee-backend-1-82p1.onrender.com/api/auth/verify-login-otp', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, otp }) // Only email and OTP are needed
@@ -193,7 +193,7 @@ const ApplicationForm = ({ onBackToHome }) => {
 
       const isFormDataPayload = typeof FormData !== 'undefined' && payload instanceof FormData;
 
-      const response = await fetch('http://localhost:5000/api/applications/submit', {
+      const response = await fetch('https://ieee-backend-1-82p1.onrender.com/api/applications/submit', {
           method: 'POST',
           headers: isFormDataPayload
               ? { 'Authorization': `Bearer ${token}` }
