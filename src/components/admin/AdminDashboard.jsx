@@ -35,29 +35,10 @@ function AdminDashboard() {
   // Show loading while checking authentication
   if (isLoading) {
     return (
-      <div style={{
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        height: '100vh',
-        fontFamily: 'Poppins, sans-serif',
-        fontSize: '1.2rem',
-        color: '#64748b'
-      }}>
-        <div style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: '1rem'
-        }}>
-          <div style={{
-            width: '24px',
-            height: '24px',
-            border: '3px solid #e5e7eb',
-            borderTop: '3px solid #667eea',
-            borderRadius: '50%',
-            animation: 'spin 1s linear infinite'
-          }}></div>
-          Loading admin dashboard...
+      <div className="loading-container">
+        <div className="loading-content">
+          <div className="loading-spinner"></div>
+          <p>Loading admin dashboard...</p>
         </div>
       </div>
     );
@@ -83,50 +64,65 @@ function AdminDashboard() {
         <div className="sidebar-overlay" onClick={closeSidebar}></div>
       )}
 
+      {/* Sidebar */}
       <aside className={`admin-sidebar ${sidebarOpen ? 'open' : ''}`}>
-        <div className="sidebar-brand">
-          <img src={ieeeLogo} alt="IEEE" />
-          <span>Admin Portal</span>
+        <div className="sidebar-header">
+          <div className="sidebar-brand">
+            <img src={ieeeLogo} alt="IEEE" />
+            <span>Admin Portal</span>
+          </div>
         </div>
         
         <nav className="sidebar-nav">
-          <NavLink 
-            to="/admin/dashboard/events" 
-            className={({ isActive }) => isActive ? 'nav-item active' : 'nav-item'}
-            onClick={closeSidebar}
-          >
-  
-            Events
-          </NavLink>
-          <NavLink 
-            to="/admin/dashboard/mentors" 
-            className={({ isActive }) => isActive ? 'nav-item active' : 'nav-item'}
-            onClick={closeSidebar}
-          >
-            Mentor List
-          </NavLink>
-          <NavLink 
-            to="/admin/dashboard/projects" 
-            className={({ isActive }) => isActive ? 'nav-item active' : 'nav-item'}
-            onClick={closeSidebar}
-          >
-            Project List
-          </NavLink>
+          <div className="nav-section">
+            <h3 className="nav-section-title">Management</h3>
+            <NavLink 
+              to="/admin/dashboard/events" 
+              className={({ isActive }) => isActive ? 'nav-item active' : 'nav-item'}
+              onClick={closeSidebar}
+            >
+              <span className="nav-icon"></span>
+              <span className="nav-text">Events</span>
+            </NavLink>
+            <NavLink 
+              to="/admin/dashboard/mentors" 
+              className={({ isActive }) => isActive ? 'nav-item active' : 'nav-item'}
+              onClick={closeSidebar}
+            >
+              <span className="nav-icon"></span>
+              <span className="nav-text">Mentors</span>
+            </NavLink>
+            <NavLink 
+              to="/admin/dashboard/projects" 
+              className={({ isActive }) => isActive ? 'nav-item active' : 'nav-item'}
+              onClick={closeSidebar}
+            >
+              <span className="nav-icon"></span>
+              <span className="nav-text">Projects</span>
+            </NavLink>
+          </div>
           
-          <button className="logout-btn" onClick={handleLogout}>
-            Logout
-          </button>
+          <div className="nav-section">
+            <button className="logout-btn" onClick={handleLogout}>
+              <span className="nav-icon"></span>
+              <span className="nav-text">Logout</span>
+            </button>
+          </div>
         </nav>
       </aside>
 
+      {/* Main Content */}
       <div className="admin-main">
         <header className="admin-topbar">
-          <h1>Admin Dashboard</h1>
-          <div className="topbar-spacer" />
-          <div className="admin-meta">
-            <span className="admin-email">
-              {adminInfo?.email || 'Admin'}
-            </span>
+          <div className="topbar-left">
+            <h1>Admin Dashboard</h1>
+          </div>
+          <div className="topbar-right">
+            <div className="admin-info">
+              <span className="admin-email">
+                {adminInfo?.email || 'Admin'}
+              </span>
+            </div>
           </div>
         </header>
 
