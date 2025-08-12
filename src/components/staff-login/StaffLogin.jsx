@@ -20,33 +20,7 @@ const StaffLogin = ({ onBackToHome, onLoginSuccess }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
 
-  // Handle browser back button
-  useEffect(() => {
-    const handlePopState = (event) => {
-      // If we're in any view other than login, go back to login first
-      if (currentView !== 'login') {
-        setCurrentView('login');
-        // Prevent the default back navigation
-        window.history.pushState(null, '', window.location.pathname);
-      } else {
-        // If we're in login view, go back to home page
-        navigate('/', { replace: true });
-      }
-    };
-
-    // Add event listener for browser back button
-    window.addEventListener('popstate', handlePopState);
-    
-    // Push current state to prevent immediate back navigation
-    window.history.pushState(null, '', window.location.pathname);
-
-    // Cleanup
-    return () => {
-      window.removeEventListener('popstate', handlePopState);
-    };
-  }, [currentView, navigate]);
-
-  // Handle route changes to update currentView
+  // Initialize view based on URL parameters
   useEffect(() => {
     const searchParams = new URLSearchParams(location.search);
     const view = searchParams.get('view');
@@ -57,6 +31,49 @@ const StaffLogin = ({ onBackToHome, onLoginSuccess }) => {
       setCurrentView('login');
     }
   }, [location.search]);
+
+  // Enhanced browser back button handling - Navigate to main page (App.jsx)
+  useEffect(() => {
+    const handlePopState = (event) => {
+      event.preventDefault();
+      
+      // Define the navigation hierarchy - all paths lead back to main page
+      const viewHierarchy = {
+        'login': 'home', // Go to main page (App.jsx)
+        'roleSelection': 'login',
+        'internalRegister': 'roleSelection',
+        'externalRegister': 'roleSelection'
+      };
+
+      const previousView = viewHierarchy[currentView];
+      
+      if (previousView === 'home') {
+        // Navigate to main page (App.jsx - root route)
+        navigate('/', { replace: true });
+      } else if (previousView) {
+        // Navigate to previous view
+        setCurrentView(previousView);
+        const newUrl = previousView === 'login' 
+          ? '/staff-login' 
+          : `/staff-login?view=${previousView}`;
+        window.history.replaceState(null, '', newUrl);
+      } else {
+        // Fallback - go to main page
+        navigate('/', { replace: true });
+      }
+    };
+
+    // Push a new state to handle back button
+    window.history.pushState(null, '', window.location.pathname + window.location.search);
+    
+    // Add event listener for browser back button
+    window.addEventListener('popstate', handlePopState);
+
+    // Cleanup
+    return () => {
+      window.removeEventListener('popstate', handlePopState);
+    };
+  }, [currentView, navigate]);
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -120,29 +137,27 @@ const StaffLogin = ({ onBackToHome, onLoginSuccess }) => {
 
   const handleCreateAccount = () => {
     setCurrentView('roleSelection');
-    // Update URL without full navigation
-    navigate('/staff-login?view=roleSelection', { replace: true });
+    navigate('/staff-login?view=roleSelection', { replace: false });
   };
 
   const handleBackToLogin = () => {
     setCurrentView('login');
-    // Update URL back to login
-    navigate('/staff-login', { replace: true });
+    navigate('/staff-login', { replace: false });
   };
 
   const handleRoleSelect = (role) => {
     if (role === 'internal') {
       setCurrentView('internalRegister');
-      navigate('/staff-login?view=internalRegister', { replace: true });
+      navigate('/staff-login?view=internalRegister', { replace: false });
     } else if (role === 'external') {
       setCurrentView('externalRegister');
-      navigate('/staff-login?view=externalRegister', { replace: true });
+      navigate('/staff-login?view=externalRegister', { replace: false });
     }
   };
 
   const handleRegistrationSuccess = (newStaff) => {
     setCurrentView('login');
-    navigate('/staff-login', { replace: true });
+    navigate('/staff-login', { replace: false });
     setLoginData(prev => ({
       ...prev,
       email: newStaff.email
@@ -165,9 +180,32 @@ const StaffLogin = ({ onBackToHome, onLoginSuccess }) => {
     }
   };
 
-  // Add a back to home button for better UX
+  // Updated to navigate to main page (App.jsx)
   const handleBackToHome = () => {
+    // Navigate to the root route which should be your App.jsx main page
     navigate('/', { replace: true });
+  };
+
+  // Common back button handler for all views
+  const handleGoBack = () => {
+    const viewHierarchy = {
+      'roleSelection': 'login',
+      'internalRegister': 'roleSelection',
+      'externalRegister': 'roleSelection'
+    };
+
+    const previousView = viewHierarchy[currentView];
+    
+    if (previousView) {
+      setCurrentView(previousView);
+      const newUrl = previousView === 'login' 
+        ? '/staff-login' 
+        : `/staff-login?view=${previousView}`;
+      navigate(newUrl, { replace: false });
+    } else {
+      // Go to main page (App.jsx)
+      navigate('/', { replace: true });
+    }
   };
 
   // Render different views based on currentView state
@@ -204,14 +242,26 @@ const StaffLogin = ({ onBackToHome, onLoginSuccess }) => {
       <div className="login-image-section"></div>
 
       <div className="login-form-section">
-        {/* Add back to home button */}
-        <button className="back-to-home-btn" onClick={handleBackToHome} title="Back to Home">
+        {/* Back to main page button */}
+        <button 
+          className="back-to-home-btn" 
+          onClick={handleBackToHome} 
+          title="Back to Main Page"
+          type="button"
+        >
           <span className="back-arrow">←</span>
-          <span className="back-text">Back to Home</span>
+          <span className="back-text">Back to Main</span>
         </button>
 
+        {/* Clickable Sairam logo for account creation */}
         <div className="top-logo">
-          <img src={sairamLogoImg} alt="Sairam Logo" className="sairam-logo-top" />
+          <img 
+            src={sairamLogoImg} 
+            alt="Sairam Logo" 
+            className="sairam-logo-top clickable-logo" 
+            onClick={handleCreateAccount}
+            title="Click to create new account"
+          />
         </div>
         
         <div className="bottom-left-logo">
@@ -282,13 +332,6 @@ const StaffLogin = ({ onBackToHome, onLoginSuccess }) => {
                   'LOGIN'
                 )}
               </button>
-              
-              <div className="login-footer-links">
-                <span className="no-account-text">Don't have an account? </span>
-                <button type="button" className="create-account-link" onClick={handleCreateAccount}>
-                  Create Account
-                </button>
-              </div>
             </form>
           </div>
         </div>
