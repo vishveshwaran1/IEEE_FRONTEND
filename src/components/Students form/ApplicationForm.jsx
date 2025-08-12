@@ -6,15 +6,15 @@ import ieeeLogoImg from '../../assets/images/ieee-logo.jpeg';
 import sairamLogoImg from '../../assets/images/logo.gif';
 
 // Import section components
-import Instructions from '../form-sections/Instructions';
-import VerificationDetails from '../form-sections/VerificationDetails';
-import DocumentsChecklist from '../form-sections/DocumentsChecklist';
-import Declaration from '../form-sections/Declaration';
-import BasicInformation from '../form-sections/BasicInformation';
-import ProjectInformation from '../form-sections/ProjectInformation';
-import ProjectIdeaTechnicals from '../form-sections/ProjectIdeaTechnicals';
-import FundingTimeline from '../form-sections/FundingTimeline';
-import ImpactDeclaration from '../form-sections/ImpactDeclaration';
+import Instructions from './form-sections/Instructions';
+import VerificationDetails from './form-sections/VerificationDetails';
+import DocumentsChecklist from './form-sections/DocumentsChecklist';
+import Declaration from './form-sections/Declaration';
+import BasicInformation from './form-sections/BasicInformation';
+import ProjectInformation from './form-sections/ProjectInformation';
+import ProjectIdeaTechnicals from './form-sections/ProjectIdeaTechnicals';
+import FundingTimeline from './form-sections/FundingTimeline';
+import ImpactDeclaration from './form-sections/ImpactDeclaration';
 import Events from './form-sections/Events';
 import { useNavigate } from 'react-router-dom';
 

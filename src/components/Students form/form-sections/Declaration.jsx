@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
-import successImage from '../../../assets/images/image-84.png';
 
-const Declaration = ({ onPrevious, onSubmit }) => {
+const Declaration = ({ onPrevious, onSubmit, pdfGenerating = false }) => {
   const [declarationData, setDeclarationData] = useState({
     applicantName: '',
     sairamId: '',
@@ -35,11 +34,7 @@ const Declaration = ({ onPrevious, onSubmit }) => {
             <div className="success-content">
               <div className="success-icon">
                 <div className="success-illustration">
-                  <img 
-                    src={successImage} 
-                    alt="Success illustration" 
-                    className="success-image"
-                  />
+                  <div className="success-checkmark">✓</div>
                 </div>
               </div>
               <h2 className="success-title">Submitted Successfully</h2>
@@ -144,10 +139,18 @@ const Declaration = ({ onPrevious, onSubmit }) => {
           </button>
           <button 
             type="button"
-            className="submit-btn"
+            className={`submit-btn ${pdfGenerating ? 'loading' : ''}`}
             onClick={handleSubmit}
+            disabled={pdfGenerating}
           >
-            Submit
+            {pdfGenerating ? (
+              <>
+                <span className="loading-spinner"></span>
+                Generating PDF...
+              </>
+            ) : (
+              'Submit'
+            )}
           </button>
         </div>
       </div>

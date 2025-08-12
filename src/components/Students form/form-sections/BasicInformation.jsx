@@ -4,25 +4,16 @@ const BasicInformation = ({ formData, handleInputChange }) => {
   return (
     <div className="form-section-page">
       <div className="section-header basic-info-header">
-        <h2 className="section-title">SECTION 1: BASIC INFORMATION</h2>
+        <div className="section-title-container">
+          <h2 className="section-title">SECTION 1: BASIC INFORMATION</h2>
+          <div className="student-id-display">
+            Student ID: {formData.studentId || 'Not Set'}
+          </div>
+        </div>
       </div>
       
       <div className="form-content">
-        <div className="form-row">
-          <div className="form-group full-width">
-            <label htmlFor="displayStudentId">Student ID</label>
-            <input
-              type="text"
-              id="displayStudentId"
-              name="displayStudentId"
-              value={formData.studentId}
-              className="form-input-main student-id-readonly"
-              disabled
-              readOnly
-            />
-          </div>
-        </div>
-
+        {/* Name Fields */}
         <div className="form-row">
           <div className="form-group half-width">
             <label htmlFor="firstName">First name</label>
@@ -33,6 +24,7 @@ const BasicInformation = ({ formData, handleInputChange }) => {
               value={formData.firstName}
               onChange={handleInputChange}
               className="form-input-main"
+              placeholder="Enter first name"
             />
           </div>
           <div className="form-group half-width">
@@ -44,10 +36,12 @@ const BasicInformation = ({ formData, handleInputChange }) => {
               value={formData.lastName}
               onChange={handleInputChange}
               className="form-input-main"
+              placeholder="Enter last name"
             />
           </div>
         </div>
 
+        {/* IEEE Membership - Full Width */}
         <div className="form-row">
           <div className="form-group full-width">
             <label htmlFor="ieeeMembershipNo">IEEE membership No.</label>
@@ -58,13 +52,15 @@ const BasicInformation = ({ formData, handleInputChange }) => {
               value={formData.ieeeMembershipNo}
               onChange={handleInputChange}
               className="form-input-main"
+              placeholder="Enter IEEE membership number"
             />
           </div>
         </div>
 
+        {/* Contact Information */}
         <div className="form-row">
           <div className="form-group half-width">
-            <label htmlFor="emailId">Email Id.</label>
+            <label htmlFor="emailId">Email Id</label>
             <input
               type="email"
               id="emailId"
@@ -72,6 +68,7 @@ const BasicInformation = ({ formData, handleInputChange }) => {
               value={formData.emailId}
               onChange={handleInputChange}
               className="form-input-main"
+              placeholder="Enter email address"
             />
           </div>
           <div className="form-group half-width">
@@ -83,10 +80,12 @@ const BasicInformation = ({ formData, handleInputChange }) => {
               value={formData.phoneNo}
               onChange={handleInputChange}
               className="form-input-main"
+              placeholder="Enter phone number"
             />
           </div>
         </div>
 
+        {/* Academic Information */}
         <div className="form-row">
           <div className="form-group half-width">
             <label htmlFor="year">Year</label>
@@ -98,10 +97,10 @@ const BasicInformation = ({ formData, handleInputChange }) => {
               className="form-input-main"
             >
               <option value="">Select Year</option>
-              <option value="1">1</option>
-              <option value="2">2</option>
-              <option value="3">3</option>
-              <option value="4">4</option>
+              <option value="1">1st Year</option>
+              <option value="2">2nd Year</option>
+              <option value="3">3rd Year</option>
+              <option value="4">4th Year</option>
             </select>
           </div>
           <div className="form-group half-width">
