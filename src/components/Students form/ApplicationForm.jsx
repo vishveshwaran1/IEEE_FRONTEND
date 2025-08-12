@@ -524,15 +524,7 @@ const ApplicationForm = ({ onBackToHome }) => {
                             <ImpactDeclaration formData={formData} handleInputChange={handleInputChange} />
                             
                             <div className="application-form-footer">
-                                <button type="button" className="form-continue-btn" onClick={handleFormContinue}>
-                                    Continue to Document Upload
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                )}
-
-                <div className="form-actions" style={{ marginBottom: '20px', textAlign: 'right' }}>
+                              <div className="form-actions" style={{ marginBottom: '20px', textAlign: 'right' }}>
                                 <button 
                                     type="button" 
                                     className="save-draft-btn" 
@@ -550,6 +542,15 @@ const ApplicationForm = ({ onBackToHome }) => {
                                      Save Draft
                                 </button>
                             </div>
+                                <button type="button" className="form-continue-btn" onClick={handleFormContinue}>
+                                    Continue to Document Upload
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                )}
+
+                
                 
                 {currentStep === 'documents' && (
                     <DocumentsChecklist
